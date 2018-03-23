@@ -1,0 +1,40 @@
+{
+  "name": "damax/media",
+  "type": "library",
+  "description": "Media management.",
+  "license": [ "MIT" ],
+  "autoload": {
+    "psr-4": { "Damax\\Media\\": "src/" }
+  },
+  "autoload-dev": {
+    "psr-4": { "Damax\\Media\\Tests\\": "tests/" }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    }
+  },
+  "require": {
+    "php": ">=7.1",
+    "beberlei/assert": "^2.9",
+    "damax/common": "0.1.*@dev",
+    "knplabs/gaufrette": "^0.5.0",
+    "ramsey/uuid": "^3.7",
+    "simple-bus/message-bus": "^3.0",
+    "symfony/http-foundation": "^4.0"
+  },
+  "require-dev": {
+    "doctrine/orm": "^2.6",
+    "friendsofphp/php-cs-fixer": "^2.10",
+    "matthiasnoback/symfony-dependency-injection-test": "^2.3"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "repositories": {
+    "damax-common": {
+      "type": "vcs",
+      "url": "https://bitbucket.org/damaxsolutions/damax-common"
+    }
+  }
+}
