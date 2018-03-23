@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc9733b0c2a3bdb0dc18ec0967527184",
+    "content-hash": "24bb59e3c70089d2c5940349e89559dc",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -254,53 +254,6 @@
             "time": "2017-09-27T21:40:39+00:00"
         },
         {
-            "name": "psr/log",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Log\\": "Psr/Log/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for logging libraries",
-            "homepage": "https://github.com/php-fig/log",
-            "keywords": [
-                "log",
-                "psr",
-                "psr-3"
-            ],
-            "time": "2016-10-10T12:19:37+00:00"
-        },
-        {
             "name": "ramsey/uuid",
             "version": "3.7.3",
             "source": {
@@ -379,59 +332,6 @@
                 "uuid"
             ],
             "time": "2018-01-20T00:28:24+00:00"
-        },
-        {
-            "name": "simple-bus/message-bus",
-            "version": "v3.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/SimpleBus/MessageBus.git",
-                "reference": "c2fb6c8e0a3b6f31441d19199f6abb983cbe0405"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/SimpleBus/MessageBus/zipball/c2fb6c8e0a3b6f31441d19199f6abb983cbe0405",
-                "reference": "c2fb6c8e0a3b6f31441d19199f6abb983cbe0405",
-                "shasum": ""
-            },
-            "require": {
-                "beberlei/assert": "~2.0",
-                "php": "^5.6 || ^7.0",
-                "psr/log": "~1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.7 || ^6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "SimpleBus\\Message\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Matthias Noback",
-                    "email": "matthiasnoback@gmail.com",
-                    "homepage": "http://php-and-symfony.matthiasnoback.nl"
-                },
-                {
-                    "name": "Cliff Odijk",
-                    "email": "cliff@jcid.nl"
-                }
-            ],
-            "description": "Generic classes and interfaces for messages and message buses",
-            "homepage": "http://github.com/SimpleBus/MessageBus",
-            "keywords": [
-                "command bus",
-                "event bus",
-                "message",
-                "message bus"
-            ],
-            "time": "2017-09-29T15:36:01+00:00"
         },
         {
             "name": "symfony/http-foundation",

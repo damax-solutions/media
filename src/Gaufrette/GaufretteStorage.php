@@ -11,7 +11,7 @@ use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Storage\Keys;
 use Damax\Media\Domain\Storage\Storage;
 use Damax\Media\Domain\Storage\StorageFailure;
-use Damax\Media\Type\Configuration;
+use Damax\Media\Type\Types;
 use Gaufrette\Exception as GaufretteException;
 use Gaufrette\FilesystemMap;
 use RuntimeException;
@@ -22,7 +22,7 @@ class GaufretteStorage implements Storage
     private $types;
     private $keys;
 
-    public function __construct(FilesystemMap $filesystems, Configuration $types, Keys $keys)
+    public function __construct(FilesystemMap $filesystems, Types $types, Keys $keys)
     {
         $this->filesystems = $filesystems;
         $this->types = $types;
@@ -48,7 +48,7 @@ class GaufretteStorage implements Storage
             throw InvalidMediaInput::unsupportedStorage($storage);
         }
 
-        $key = $this->keys->generateKey($context['file']);
+        $key = $this->keys->nextKey($context['file']);
 
         try {
             $this->filesystems

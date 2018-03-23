@@ -6,5 +6,5 @@ namespace Damax\Media\Domain\Storage;
 
 interface Keys
 {
-    public function generateKey($context = []): string;
+    public function nextKey($context = []): string;
 }

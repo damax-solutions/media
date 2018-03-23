@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Damax\Media\Domain\Model;
 
 use Assert\Assert;
-use Damax\Media\Type\Configuration;
+use Damax\Media\Type\Types;
 
 class ConfigurableMediaFactory implements MediaFactory
 {
     private $repository;
     private $types;
 
-    public function __construct(MediaRepository $repository, Configuration $types)
+    public function __construct(MediaRepository $repository, Types $types)
     {
         $this->repository = $repository;
         $this->types = $types;
