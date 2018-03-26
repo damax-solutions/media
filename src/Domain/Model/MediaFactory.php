@@ -6,8 +6,5 @@ namespace Damax\Media\Domain\Model;
 
 interface MediaFactory
 {
-    /**
-     * @throws InvalidMediaInput
-     */
     public function create($data, User $creator = null): Media;
 }

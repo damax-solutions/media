@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Damax\Media\Gaufrette;
 
 use Assert\Assert;
+use Damax\Media\Domain\Exception\FileAlreadyExists;
+use Damax\Media\Domain\Exception\InvalidMediaInput;
+use Damax\Media\Domain\Exception\MediaNotReadable;
 use Damax\Media\Domain\Model\File;
-use Damax\Media\Domain\Model\InvalidMediaInput;
 use Damax\Media\Domain\Model\Media;
+use Damax\Media\Domain\Model\MediaInfo;
 use Damax\Media\Domain\Storage\Keys;
 use Damax\Media\Domain\Storage\Storage;
 use Damax\Media\Domain\Storage\StorageFailure;
@@ -29,16 +32,49 @@ class GaufretteStorage implements Storage
         $this->keys = $keys;
     }
 
+    public function read(Media $media): string
+    {
+        if (null === $file = $media->file()) {
+            MediaNotReadable::missingFile();
+        }
+
+        return $this->filesystems
+            ->get($file->storage())
+            ->get($file->key())
+            ->getContent();
+    }
+
+    public function streamTo(Media $media, $stream): void
+    {
+        if (null === $file = $media->file()) {
+            MediaNotReadable::missingFile();
+        }
+
+        $source = fopen('gaufrette://' . $media->type() . '/' . $file->key(), 'rb');
+
+        stream_copy_to_stream($source, $stream);
+    }
+
+    public function dump(Media $media, string $filename): void
+    {
+        file_put_contents($filename, $this->read($media));
+    }
+
     public function write(Media $media, $context = []): File
     {
         Assert::that($context)
-            ->keyIsset('file')
+            ->keyIsset('mime_type')
+            ->keyIsset('size')
             ->keyIsset('stream')
         ;
 
-        $file = File::metadata($context['file']);
+        if (null !== $media->file()) {
+            throw new FileAlreadyExists('File already exists.');
+        }
 
-        if (!$media->file()->sameAs($file)) {
+        $info = new MediaInfo($context['mime_type'], $context['size']);
+
+        if (!$media->info()->sameAs($info)) {
             throw new InvalidMediaInput('Invalid file.');
         }
 
@@ -48,7 +84,8 @@ class GaufretteStorage implements Storage
             throw InvalidMediaInput::unsupportedStorage($storage);
         }
 
-        $key = $this->keys->nextKey($context['file']);
+        // Prefix all keys with media type?
+        $key = $media->type() . '/' . $this->keys->nextKey($context['file']);
 
         try {
             $this->filesystems
@@ -59,6 +96,6 @@ class GaufretteStorage implements Storage
             throw StorageFailure::invalidWrite($key, $e);
         }
 
-        return $file->store($key, $storage);
+        return new File($info->mimeType(), $info->size(), $key, $storage);
     }
 }

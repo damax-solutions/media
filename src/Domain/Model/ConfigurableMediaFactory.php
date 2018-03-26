@@ -5,17 +5,14 @@ declare(strict_types=1);
 namespace Damax\Media\Domain\Model;
 
 use Assert\Assert;
-use Damax\Media\Type\Types;
 
 class ConfigurableMediaFactory implements MediaFactory
 {
     private $repository;
-    private $types;
 
-    public function __construct(MediaRepository $repository, Types $types)
+    public function __construct(MediaRepository $repository)
     {
         $this->repository = $repository;
-        $this->types = $types;
     }
 
     public function create($data, User $creator = null): Media
@@ -23,15 +20,12 @@ class ConfigurableMediaFactory implements MediaFactory
         Assert::that($data)
             ->keyIsset('type')
             ->keyIsset('name')
-            ->keyIsset('file')
+            ->keyIsset('mime_type')
+            ->keyIsset('size')
         ;
 
-        if (!$this->types->hasDefinition($data['type'])) {
-            throw InvalidMediaInput::unregisteredType($data['type']);
-        }
+        $info = new MediaInfo($data['mime_type'], $data['size']);
 
-        $file = File::metadata($data['file']);
-
-        return new Media($this->repository->nextId(), $data['type'], $data['name'], $file, $creator);
+        return new Media($this->repository->nextId(), $data['type'], $data['name'], $info, $creator);
     }
 }

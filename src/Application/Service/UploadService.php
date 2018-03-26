@@ -7,8 +7,10 @@ namespace Damax\Media\Application\Service;
 use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Application\Dto\MediaDto;
+use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Domain\Model\MediaRepository;
 use Damax\Media\Domain\Storage\Storage;
+use Throwable;
 
 class UploadService
 {
@@ -24,11 +26,18 @@ class UploadService
         $this->assembler = $assembler;
     }
 
+    /**
+     * @throws MediaUploadFailure
+     */
     public function upload(UploadMedia $command): MediaDto
     {
         $media = $this->getMedia($command->mediaId);
 
-        $media->upload($this->storage->write($media, $command));
+        try {
+            $media->upload($this->storage->write($media, $command));
+        } catch (Throwable $e) {
+            throw new MediaUploadFailure($e->getMessage(), 0, $e);
+        }
 
         $this->mediaRepository->save($media);
 

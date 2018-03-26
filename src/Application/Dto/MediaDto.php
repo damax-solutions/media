@@ -29,9 +29,14 @@ class MediaDto
     public $name;
 
     /**
-     * @var FileDto
+     * @var string
      */
-    public $file;
+    public $mimeType;
+
+    /**
+     * @var int
+     */
+    public $size;
 
     /**
      * @var DateTimeInterface

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Damax\Media\Application\Command;
 
 use Damax\Common\Application\AsArrayTrait;
-use Damax\Media\Application\Dto\FileDto;
 
 class CreateMedia
 {
@@ -22,7 +21,12 @@ class CreateMedia
     public $name;
 
     /**
-     * @var FileDto
+     * @var string
      */
-    public $file;
+    public $mimeType;
+
+    /**
+     * @var int
+     */
+    public $size;
 }

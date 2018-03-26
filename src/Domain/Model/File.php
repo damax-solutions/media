@@ -4,53 +4,41 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Model;
 
-final class File
+final class File extends MediaInfo
 {
-    private $mimeType;
-    private $size;
     private $key;
     private $storage;
 
-    public static function metadata($data): self
+    public function __construct(string $mimeType, int $size, string $key, string $storage)
     {
-        return new self($data['mime_type'], $data['size']);
-    }
+        parent::__construct($mimeType, $size);
 
-    public function __construct(string $mimeType, int $size, string $key = null, string $storage = null)
-    {
-        $this->mimeType = $mimeType;
-        $this->size = $size;
         $this->key = $key;
         $this->storage = $storage;
     }
 
-    public function mimeType(): string
+    public function defined(): bool
     {
-        return $this->mimeType;
+        return (bool) $this->key;
     }
 
-    public function size(): int
-    {
-        return $this->size;
-    }
-
-    public function key(): ?string
+    public function key(): string
     {
         return $this->key;
     }
 
-    public function storage(): ?string
+    public function filename(): ?string
+    {
+        return pathinfo($this->key, PATHINFO_FILENAME);
+    }
+
+    public function extension(): ?string
+    {
+        return pathinfo($this->key, PATHINFO_EXTENSION);
+    }
+
+    public function storage(): string
     {
         return $this->storage;
-    }
-
-    public function sameAs(File $file): bool
-    {
-        return $this->mimeType === $file->mimeType && $this->size = $file->size && $this->key === $file->key && $this->storage === $file->storage;
-    }
-
-    public function store(string $key, string $storage): self
-    {
-        return new self($this->mimeType, $this->size, $key, $storage);
     }
 }

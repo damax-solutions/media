@@ -6,10 +6,11 @@ namespace Damax\Media\Bridge\Symfony\Bundle\Controller;
 
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\UploadMedia;
-use Damax\Media\Application\Dto\FileDto;
+use Damax\Media\Application\Service\DownloadService;
 use Damax\Media\Application\Service\MediaService;
 use Damax\Media\Application\Service\UploadService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class MediaController
 {
@@ -17,9 +18,8 @@ class MediaController
     {
         $command = new CreateMedia();
 
-        $command->file = new FileDto();
-        $command->file->mimeType = $request->headers->get('X-Upload-Content-Type');
-        $command->file->size = (int) $request->headers->get('X-Upload-Content-Length');
+        $command->mimeType = $request->headers->get('X-Upload-Content-Type');
+        $command->size = (int) $request->headers->get('X-Upload-Content-Length');
 
         $service->create($command);
     }
@@ -30,11 +30,14 @@ class MediaController
 
         $command->mediaId = $id;
         $command->stream = $request->getContent(true);
-
-        $command->file = new FileDto();
-        $command->file->mimeType = $request->headers->get('Content-Type');
-        $command->file->size = (int) $request->headers->get('Content-Length');
+        $command->mimeType = $request->headers->get('Content-Type');
+        $command->size = (int) $request->headers->get('Content-Length');
 
         $service->upload($command);
+    }
+
+    public function downloadAction(string $id, DownloadService $service): Response
+    {
+        return $service->download($id);
     }
 }

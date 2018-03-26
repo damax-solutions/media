@@ -18,11 +18,11 @@ class RandomKeys implements Keys
     public function nextKey($context = []): string
     {
         $key = bin2hex(random_bytes(intdiv($this->keyLength, 2)));
-        $ext = '';
 
-        if (isset($context['mime_type']) && ($ext = $this->guesser->guess($context['mime_type']))) {
-            $ext = '.' . $ext;
-        }
+        $ext = isset($context['mime_type']) && ($guess = $this->guesser->guess($context['mime_type']))
+            ? '.' . $guess
+            : null
+        ;
 
         return date('Y/m/d', time()) . '/' . $key . $ext;
     }

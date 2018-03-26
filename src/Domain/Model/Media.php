@@ -17,18 +17,23 @@ class Media
     private $status = self::STATUS_PENDING;
     private $type;
     private $name;
-    private $file;
+    private $info;
     private $createdAt;
     private $updatedAt;
     private $createdBy;
     private $updatedBy;
 
-    public function __construct(UuidInterface $id, string $type, string $name, File $file, User $user = null)
+    /**
+     * @var File
+     */
+    private $file;
+
+    public function __construct(UuidInterface $id, string $type, string $name, MediaInfo $info, User $user = null)
     {
         $this->id = $id;
         $this->type = $type;
         $this->name = $name;
-        $this->file = $file;
+        $this->info = $info;
         $this->createdAt = $this->updatedAt = new DateTimeImmutable();
         $this->createdBy = $this->updatedBy = $user;
     }
@@ -53,9 +58,9 @@ class Media
         return $this->name;
     }
 
-    public function file(): File
+    public function info(): MediaInfo
     {
-        return $this->file;
+        return $this->info;
     }
 
     public function createdAt(): DateTimeInterface
@@ -76,6 +81,11 @@ class Media
     public function updatedBy(): ?User
     {
         return $this->updatedBy;
+    }
+
+    public function file(): ?File
+    {
+        return $this->file && $this->file->defined() ? $this->file : null;
     }
 
     public function upload(File $file, User $uploader = null)
