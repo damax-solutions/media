@@ -6,8 +6,8 @@ namespace Damax\Media\Domain\Model;
 
 class MediaInfo
 {
-    private $mimeType;
-    private $size;
+    protected $mimeType;
+    protected $size;
 
     public function __construct(string $mimeType, int $size)
     {

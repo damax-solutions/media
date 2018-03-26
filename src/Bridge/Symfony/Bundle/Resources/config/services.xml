@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true" public="false" />
+
+        <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Controller\" resource="../../Controller">
+            <tag name="controller.service_arguments" />
+        </prototype>
+
+        <!-- Validators -->
+
+        <prototype namespace="Damax\Media\Bridge\Symfony\Validator\Constraints\" resource="../../../Validator/Constraints" />
+
+        <!-- Application -->
+
+        <prototype namespace="Damax\Media\Application\Service\" resource="../../../../../Application/Service" />
+
+        <service id="Damax\Media\Application\Dto\Assembler" />
+
+        <!-- Types -->
+
+        <service id="Damax\Media\Type\Types" />
+
+        <!-- Domain -->
+
+        <service id="Damax\Media\Domain\Model\MediaFactory" class="Damax\Media\Domain\Model\ConfigurableMediaFactory" />
+
+    </services>
+</container>

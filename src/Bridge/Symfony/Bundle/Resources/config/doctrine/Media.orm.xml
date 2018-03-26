@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity table="media" name="Damax\Media\Domain\Model\Media" change-tracking-policy="DEFERRED_EXPLICIT">
+        <id name="id" type="uuid">
+            <generator strategy="NONE" />
+        </id>
+
+        <field name="status" length="32" />
+        <field name="type" length="32" />
+        <field name="name" />
+        <field name="createdAt" type="datetimetz" />
+        <field name="updatedAt" type="datetimetz" />
+
+        <embedded name="info" class="MediaInfo" />
+        <embedded name="file" class="File" />
+    </entity>
+
+</doctrine-mapping>

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <defaults autowire="true" public="false">
+            <bind key="$mediaClassName">%damax.media.media_class%</bind>
+        </defaults>
+
+        <prototype namespace="Damax\Media\Doctrine\Orm\" resource="../../../../../Doctrine/Orm" />
+
+        <service id="Damax\Media\Domain\Model\MediaRepository" alias="Damax\Media\Doctrine\Orm\MediaRepository" />
+
+    </services>
+</container>

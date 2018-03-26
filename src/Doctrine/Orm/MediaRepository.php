@@ -22,10 +22,10 @@ class MediaRepository implements MediaRepositoryInterface
      */
     private $className;
 
-    public function __construct(EntityManagerInterface $em, string $userClassName)
+    public function __construct(EntityManagerInterface $em, string $mediaClassName)
     {
         $this->em = $em;
-        $this->className = $userClassName;
+        $this->className = $mediaClassName;
     }
 
     public function nextId(): UuidInterface
