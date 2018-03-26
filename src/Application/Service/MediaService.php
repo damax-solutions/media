@@ -12,13 +12,13 @@ use Damax\Media\Domain\Model\MediaRepository;
 
 class MediaService
 {
-    private $repository;
+    private $mediaRepository;
     private $mediaFactory;
     private $assembler;
 
-    public function __construct(MediaRepository $repository, MediaFactory $mediaFactory, Assembler $assembler)
+    public function __construct(MediaRepository $mediaRepository, MediaFactory $mediaFactory, Assembler $assembler)
     {
-        $this->repository = $repository;
+        $this->mediaRepository = $mediaRepository;
         $this->mediaFactory = $mediaFactory;
         $this->assembler = $assembler;
     }
@@ -27,7 +27,7 @@ class MediaService
     {
         $media = $this->mediaFactory->create($command);
 
-        $this->repository->save($media);
+        $this->mediaRepository->save($media);
 
         return $this->assembler->toMediaDto($media);
     }

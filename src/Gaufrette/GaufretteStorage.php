@@ -35,7 +35,7 @@ class GaufretteStorage implements Storage
     public function read(Media $media): string
     {
         if (null === $file = $media->file()) {
-            MediaNotReadable::missingFile();
+            throw MediaNotReadable::missingFile();
         }
 
         return $this->filesystems
@@ -47,12 +47,13 @@ class GaufretteStorage implements Storage
     public function streamTo(Media $media, $stream): void
     {
         if (null === $file = $media->file()) {
-            MediaNotReadable::missingFile();
+            throw MediaNotReadable::missingFile();
         }
 
-        $source = fopen('gaufrette://' . $media->type() . '/' . $file->key(), 'rb');
+        $source = fopen('gaufrette://' . $file->storage() . '/' . $file->key(), 'rb');
 
         stream_copy_to_stream($source, $stream);
+        rewind($stream);
     }
 
     public function dump(Media $media, string $filename): void
@@ -85,7 +86,9 @@ class GaufretteStorage implements Storage
         }
 
         // Prefix all keys with media type?
-        $key = $media->type() . '/' . $this->keys->nextKey($context['file']);
+        $key = $media->type() . '/' . $this->keys->nextKey([
+            'mime_type' => $context['mime_type'],
+        ]);
 
         try {
             $this->filesystems

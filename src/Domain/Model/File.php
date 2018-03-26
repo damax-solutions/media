@@ -27,9 +27,9 @@ final class File extends MediaInfo
         return $this->key;
     }
 
-    public function filename(): ?string
+    public function basename(): ?string
     {
-        return pathinfo($this->key, PATHINFO_FILENAME);
+        return pathinfo($this->key, PATHINFO_BASENAME);
     }
 
     public function extension(): ?string

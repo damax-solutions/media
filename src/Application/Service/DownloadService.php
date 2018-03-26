@@ -43,7 +43,7 @@ class DownloadService
             $this->storage->streamTo($media, $output);
         });
 
-        $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $media->file()->filename());
+        $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $media->file()->basename());
 
         $response->headers->set('Content-Length', $media->file()->size());
         $response->headers->set('Content-Type', $media->file()->mimeType());
