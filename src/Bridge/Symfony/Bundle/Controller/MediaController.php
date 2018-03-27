@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Damax\Media\Bridge\Symfony\Bundle\Controller;
 
 use Damax\Common\Bridge\Symfony\Bundle\Annotation\Command;
+use Damax\Common\Bridge\Symfony\Bundle\Annotation\Serialize;
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\UploadMedia;
+use Damax\Media\Application\Dto\MediaDto;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaNotUploaded;
 use Damax\Media\Application\Exception\MediaUploadFailure;
@@ -32,11 +34,12 @@ class MediaController
      * @Method("POST")
      * @Route("")
      * @Command(CreateMedia::class)
+     * @Serialize()
      *
      * @throws BadRequestHttpException
      * @throws UnprocessableEntityHttpException
      */
-    public function createAction(Request $request, MediaService $service, CreateMedia $command, ValidatorInterface $validator)
+    public function createAction(Request $request, MediaService $service, CreateMedia $command, ValidatorInterface $validator): MediaDto
     {
         $command->mimeType = $request->headers->get('X-Upload-Content-Type');
         $command->size = (int) $request->headers->get('X-Upload-Content-Length');
@@ -45,18 +48,19 @@ class MediaController
             throw new BadRequestHttpException(sprintf('%s: %s', $error->getPropertyPath(), $error->getMessage()));
         }
 
-        $service->create($command);
+        return $service->create($command);
     }
 
     /**
      * @Method("PUT")
      * @Route("/{id}/upload")
+     * @Serialize()
      *
      * @throws LengthRequiredHttpException
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
-    public function uploadAction(Request $request, string $id, UploadService $service, ValidatorInterface $validator)
+    public function uploadAction(Request $request, string $id, UploadService $service, ValidatorInterface $validator): MediaDto
     {
         if (!($length = $request->headers->get('Content-Length'))) {
             throw new LengthRequiredHttpException();
@@ -73,7 +77,7 @@ class MediaController
         }
 
         try {
-            $service->upload($command);
+            return $service->upload($command);
         } catch (MediaNotFound $e) {
             throw new NotFoundHttpException();
         } catch (MediaUploadFailure $e) {

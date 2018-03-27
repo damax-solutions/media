@@ -22,12 +22,12 @@
         <attribute name="size">
             <group>media</group>
         </attribute>
-        <attribute name="createdAt">
+        <!--attribute name="createdAt">
             <group>media</group>
         </attribute>
         <attribute name="updatedAt">
             <group>media</group>
-        </attribute>
+        </attribute-->
     </class>
 
 </serializer>

@@ -54,8 +54,6 @@ class GaufretteStorage implements Storage
         $source = fopen('gaufrette://' . $file->storage() . '/' . $file->key(), 'rb');
 
         stream_copy_to_stream($source, $stream);
-
-        rewind($stream);
     }
 
     public function dump(Media $media, string $filename): void
