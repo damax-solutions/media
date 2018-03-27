@@ -7,6 +7,7 @@ namespace Damax\Media\Application\Service;
 use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Application\Dto\MediaDto;
+use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Domain\Model\MediaRepository;
 use Damax\Media\Domain\Storage\Storage;
@@ -28,6 +29,7 @@ class UploadService
 
     /**
      * @throws MediaUploadFailure
+     * @throws MediaNotFound
      */
     public function upload(UploadMedia $command): MediaDto
     {

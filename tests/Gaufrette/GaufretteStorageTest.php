@@ -147,6 +147,23 @@ class GaufretteStorageTest extends TestCase
     /**
      * @test
      */
+    public function it_throws_exception_when_writing_media_with_unregistered_type()
+    {
+        $this->expectException(InvalidMediaInput::class);
+        $this->expectExceptionMessage('Media type "document" is not registered.');
+
+        (new GaufretteStorage($this->filesystems, new Types(), $this->keys))->write(new PendingPdfMedia(), [
+            'mime_type' => 'application/pdf',
+            'size' => 1024,
+            'stream' => $stream = tmpfile(),
+        ]);
+
+        fclose($stream);
+    }
+
+    /**
+     * @test
+     */
     public function it_throws_exception_when_writing_media_with_invalid_context()
     {
         $this->expectException(InvalidMediaInput::class);

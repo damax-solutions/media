@@ -20,4 +20,27 @@
         </property>
     </class>
 
+    <class name="Damax\Media\Application\Command\MediaCommand">
+        <property name="mediaId">
+            <constraint name="NotBlank" />
+            <constraint name="Uuid" />
+        </property>
+    </class>
+
+    <class name="Damax\Media\Application\Command\UploadMedia">
+        <property name="mimeType">
+            <constraint name="NotBlank" />
+        </property>
+        <property name="size">
+            <constraint name="GreaterThan">
+                <option name="value">16</option>
+            </constraint>
+        </property>
+        <property name="stream">
+            <constraint name="Type">
+                <option name="type">resource</option>
+            </constraint>
+        </property>
+    </class>
+
 </constraint-mapping>
