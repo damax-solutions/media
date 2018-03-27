@@ -5,7 +5,9 @@
 
     <services>
 
-        <defaults autowire="true" autoconfigure="true" public="false" />
+        <defaults autowire="true" autoconfigure="true" public="false">
+            <bind key="$keyLength">%damax.media.key_length%</bind>
+        </defaults>
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Controller\" resource="../../Controller">
             <tag name="controller.service_arguments" />
@@ -21,13 +23,27 @@
 
         <service id="Damax\Media\Application\Dto\Assembler" />
 
+        <!-- Domain -->
+
+        <service id="Damax\Media\Domain\Model\MediaFactory" class="Damax\Media\Domain\Model\ConfigurableMediaFactory" />
+
+        <service id="Damax\Media\Domain\Storage\ExtensionGuesser" class="Damax\Media\Domain\Storage\SymfonyExtensionGuesser" />
+
+        <service id="Damax\Media\Domain\Storage\Keys" class="Damax\Media\Domain\Storage\RandomKeys" />
+
+        <!-- Storage -->
+
+        <service id="Damax\Media\Domain\Storage\Storage" class="Damax\Media\Gaufrette\GaufretteStorage" />
+
         <!-- Types -->
 
         <service id="Damax\Media\Type\Types" />
 
-        <!-- Domain -->
+        <!-- Gaufrette -->
 
-        <service id="Damax\Media\Domain\Model\MediaFactory" class="Damax\Media\Domain\Model\ConfigurableMediaFactory" />
+        <service id="Gaufrette\FilesystemMap">
+            <factory class="Gaufrette\StreamWrapper" method="getFilesystemMap" />
+        </service>
 
     </services>
 </container>

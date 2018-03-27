@@ -41,7 +41,8 @@ class GaufretteStorage implements Storage
         return $this->filesystems
             ->get($file->storage())
             ->get($file->key())
-            ->getContent();
+            ->getContent()
+        ;
     }
 
     public function streamTo(Media $media, $stream): void
@@ -53,6 +54,7 @@ class GaufretteStorage implements Storage
         $source = fopen('gaufrette://' . $file->storage() . '/' . $file->key(), 'rb');
 
         stream_copy_to_stream($source, $stream);
+
         rewind($stream);
     }
 
@@ -74,21 +76,24 @@ class GaufretteStorage implements Storage
         }
 
         $info = new MediaInfo($context['mime_type'], $context['size']);
+        $type = $media->type();
 
         if (!$media->info()->sameAs($info)) {
             throw new InvalidMediaInput('Invalid file.');
         }
 
-        $storage = $this->types->definition($media->type())->storage();
+        if (!$this->types->hasDefinition($type)) {
+            throw InvalidMediaInput::unregisteredType($type);
+        }
+
+        $storage = $this->types->definition($type)->storage();
 
         if (!$this->filesystems->has($storage)) {
             throw InvalidMediaInput::unsupportedStorage($storage);
         }
 
         // Prefix all keys with media type?
-        $key = $media->type() . '/' . $this->keys->nextKey([
-            'mime_type' => $context['mime_type'],
-        ]);
+        $key = $type . '/' . $this->keys->nextKey(['mime_type' => $context['mime_type']]);
 
         try {
             $this->filesystems

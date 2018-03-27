@@ -15,7 +15,7 @@
         </property>
         <property name="size">
             <constraint name="GreaterThan">
-                <option name="value">1024</option>
+                <option name="value">16</option>
             </constraint>
         </property>
     </class>

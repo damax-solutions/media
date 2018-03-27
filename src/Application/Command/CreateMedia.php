@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Damax\Media\Application\Command;
 
+use ArrayAccess;
 use Damax\Common\Application\AsArrayTrait;
 
-class CreateMedia
+class CreateMedia implements ArrayAccess
 {
     use AsArrayTrait;
 

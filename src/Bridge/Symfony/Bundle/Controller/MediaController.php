@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Bridge\Symfony\Bundle\Controller;
 
+use Damax\Common\Bridge\Symfony\Bundle\Annotation\Command;
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Service\DownloadService;
@@ -15,8 +16,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -27,19 +26,13 @@ class MediaController
     /**
      * @Method("POST")
      * @Route("")
+     * @Command(CreateMedia::class)
      *
      * @throws BadRequestHttpException
      * @throws UnprocessableEntityHttpException
      */
-    public function createAction(Request $request, MediaService $service, ValidatorInterface $validator, SerializerInterface $serializer)
+    public function createAction(Request $request, MediaService $service, CreateMedia $command, ValidatorInterface $validator)
     {
-        /* @var CreateMedia $command */
-        try {
-            $command = $serializer->deserialize($request->getContent(), CreateMedia::class, 'json');
-        } catch (ExceptionInterface $e) {
-            throw new UnprocessableEntityHttpException();
-        }
-
         $command->mimeType = $request->headers->get('X-Upload-Content-Type');
         $command->size = (int) $request->headers->get('X-Upload-Content-Length');
 
