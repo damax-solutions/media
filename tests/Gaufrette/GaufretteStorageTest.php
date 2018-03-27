@@ -122,6 +122,8 @@ class GaufretteStorageTest extends TestCase
 
         $this->storage->streamTo($this->getMedia(), $stream);
 
+        rewind($stream);
+
         $this->assertEquals('__binary__', stream_get_contents($stream));
 
         fclose($stream);
