@@ -29,6 +29,7 @@ class MediaController
      * @Route("")
      *
      * @throws BadRequestHttpException
+     * @throws UnprocessableEntityHttpException
      */
     public function createAction(Request $request, MediaService $service, ValidatorInterface $validator, SerializerInterface $serializer)
     {
