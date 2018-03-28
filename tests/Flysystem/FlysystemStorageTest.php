@@ -2,32 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Tests\Gaufrette;
+namespace Damax\Media\Tests\Flysystem;
 
 use Damax\Media\Domain\Exception\InvalidMediaInput;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Storage\Keys;
 use Damax\Media\Domain\Storage\StorageFailure;
-use Damax\Media\Gaufrette\GaufretteStorage;
+use Damax\Media\Flysystem\FlysystemStorage;
 use Damax\Media\Tests\Domain\Model\FileFactory;
 use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
 use Damax\Media\Type\Definition;
 use Damax\Media\Type\Types;
-use Gaufrette\Adapter\InMemory;
-use Gaufrette\Exception\UnsupportedAdapterMethodException;
-use Gaufrette\Filesystem;
-use Gaufrette\FilesystemInterface;
-use Gaufrette\FilesystemMap;
-use Gaufrette\StreamWrapper;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
+use League\Flysystem\MountManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 
-class GaufretteStorageTest extends TestCase
+class FlysystemStorageTest extends TestCase
 {
     /**
-     * @var FilesystemMap
+     * @var MountManager
      */
-    private $filesystems;
+    private $mountManager;
 
     /**
      * @var FilesystemInterface
@@ -35,32 +35,38 @@ class GaufretteStorageTest extends TestCase
     private $filesystem;
 
     /**
+     * @var Types
+     */
+    private $types;
+
+    /**
      * @var Keys|MockObject
      */
     private $keys;
 
     /**
-     * @var GaufretteStorage
+     * @var FlysystemStorage
      */
     private $storage;
 
     protected function setUp()
     {
-        $this->filesystem = new Filesystem(new InMemory());
+        $this->filesystem = new Filesystem(new Local(__DIR__ . '/_data'));
         $this->filesystem->write('xyz/abc/filename.pdf', '__binary__');
 
-        $this->filesystems = new FilesystemMap();
-        $this->filesystems->set('s3', $this->filesystem);
+        $this->mountManager = new MountManager(['s3' => $this->filesystem]);
 
-        StreamWrapper::setFilesystemMap($this->filesystems);
-        StreamWrapper::register();
-
-        $types = new Types([
+        $this->types = new Types([
             'document' => new Definition('s3', 2048, ['application/pdf']),
         ]);
 
         $this->keys = $this->createMock(Keys::class);
-        $this->storage = new GaufretteStorage($this->filesystems, $types, $this->keys);
+        $this->storage = new FlysystemStorage($this->mountManager, $this->types, $this->keys);
+    }
+
+    protected function tearDown()
+    {
+        (new SymfonyFilesystem())->remove(__DIR__ . '/_data');
     }
 
     /**
@@ -95,9 +101,7 @@ class GaufretteStorageTest extends TestCase
         $this->expectException(InvalidMediaInput::class);
         $this->expectExceptionMessage('Storage "s3" is not supported.');
 
-        $this->filesystems->remove('s3');
-
-        $this->storage->write(new PendingPdfMedia(), [
+        (new FlysystemStorage(new MountManager(), $this->types, $this->keys))->write(new PendingPdfMedia(), [
             'mime_type' => 'application/pdf',
             'size' => 1024,
             'stream' => 'stream',
@@ -109,14 +113,14 @@ class GaufretteStorageTest extends TestCase
      */
     public function it_throws_exception_when_writing_media_with_filesystem_exception()
     {
-        $filesystem = $this->createMock(Filesystem::class);
+        $filesystem = $this->createMock(FilesystemInterface::class);
         $filesystem
             ->expects($this->once())
-            ->method('write')
-            ->willThrowException(new UnsupportedAdapterMethodException())
+            ->method('writeStream')
+            ->willThrowException(new RuntimeException('invalid write'))
         ;
 
-        $this->filesystems->set('s3', $filesystem);
+        $this->mountManager->mountFilesystem('s3', $filesystem);
 
         $this->keys
             ->method('nextKey')
@@ -158,7 +162,7 @@ class GaufretteStorageTest extends TestCase
         fclose($stream);
 
         $this->assertTrue($this->filesystem->has('document/new_file.pdf'));
-        $this->assertEquals('__binary__', $this->filesystem->get('document/new_file.pdf')->getContent());
+        $this->assertEquals('__binary__', $this->filesystem->read('document/new_file.pdf'));
     }
 
     private function getMedia(): Media

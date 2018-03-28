@@ -29,4 +29,9 @@ final class Types
     {
         return isset($this->definitions[$name]);
     }
+
+    public function reset(): void
+    {
+        $this->definitions = [];
+    }
 }
