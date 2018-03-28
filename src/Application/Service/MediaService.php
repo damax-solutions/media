@@ -7,12 +7,14 @@ namespace Damax\Media\Application\Service;
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Application\Dto\MediaDto;
+use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Domain\Model\MediaFactory;
 use Damax\Media\Domain\Model\MediaRepository;
 
 class MediaService
 {
-    private $mediaRepository;
+    use MediaServiceTrait;
+
     private $mediaFactory;
     private $assembler;
 
@@ -30,5 +32,13 @@ class MediaService
         $this->mediaRepository->save($media);
 
         return $this->assembler->toMediaDto($media);
+    }
+
+    /**
+     * @throws MediaNotFound
+     */
+    public function fetch(string $mediaId): MediaDto
+    {
+        return $this->assembler->toMediaDto($this->getMedia($mediaId));
     }
 }

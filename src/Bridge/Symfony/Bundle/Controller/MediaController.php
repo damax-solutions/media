@@ -86,6 +86,21 @@ class MediaController
     }
 
     /**
+     * @Route("/{id}")
+     * @Serialize()
+     *
+     * @throws NotFoundHttpException
+     */
+    public function getAction(string $id, MediaService $service): MediaDto
+    {
+        try {
+            return $service->fetch($id);
+        } catch (MediaNotFound $e) {
+            throw new NotFoundHttpException();
+        }
+    }
+
+    /**
      * @Method("GET")
      * @Route("/{id}/download")
      *

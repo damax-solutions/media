@@ -11,6 +11,7 @@ use Damax\Media\Application\Service\MediaService;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Model\MediaFactory;
 use Damax\Media\Domain\Model\MediaRepository;
+use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -70,5 +71,28 @@ class MediaServiceTest extends TestCase
         ;
 
         $this->assertSame($dto, $this->service->create($command));
+    }
+
+    /**
+     * @test
+     */
+    public function it_fetches_media()
+    {
+        $media = new PendingPdfMedia();
+
+        $this->mediaRepository
+            ->expects($this->once())
+            ->method('byId')
+            ->with('183702c5-30de-11e8-97f3-005056806fb2')
+            ->willReturn($media)
+        ;
+        $this->assembler
+            ->expects($this->once())
+            ->method('toMediaDto')
+            ->with($this->identicalTo($media))
+            ->willReturn($dto = new MediaDto())
+        ;
+
+        $this->assertSame($dto, $this->service->fetch('183702c5-30de-11e8-97f3-005056806fb2'));
     }
 }
