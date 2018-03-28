@@ -2,7 +2,7 @@
   "name": "damax/media",
   "type": "library",
   "description": "Media management.",
-  "license": [ "MIT" ],
+  "license": "MIT",
   "autoload": {
     "psr-4": { "Damax\\Media\\": "src/" }
   },

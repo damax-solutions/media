@@ -67,12 +67,12 @@
             "source": {
                 "type": "git",
                 "url": "https://bitbucket.org/damaxsolutions/damax-common.git",
-                "reference": "504110fc70c394f23d59f30dcf487d4e4d231667"
+                "reference": "6c23826df35565f2d962e1b1d5cdf983adb685b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/damaxsolutions/damax-common/get/504110fc70c394f23d59f30dcf487d4e4d231667.zip",
-                "reference": "504110fc70c394f23d59f30dcf487d4e4d231667",
+                "url": "https://bitbucket.org/damaxsolutions/damax-common/get/6c23826df35565f2d962e1b1d5cdf983adb685b5.zip",
+                "reference": "6c23826df35565f2d962e1b1d5cdf983adb685b5",
                 "shasum": ""
             },
             "require-dev": {
@@ -114,9 +114,9 @@
             "description": "Common libraries.",
             "homepage": "https://bitbucket.org/damaxsolutions/damax-common",
             "support": {
-                "source": "https://bitbucket.org/damaxsolutions/damax-common/src/504110fc70c394f23d59f30dcf487d4e4d231667/?at=master"
+                "source": "https://bitbucket.org/damaxsolutions/damax-common/src/6c23826df35565f2d962e1b1d5cdf983adb685b5/?at=master"
             },
-            "time": "2018-03-27T17:29:10+00:00"
+            "time": "2018-03-28T13:04:23+00:00"
         },
         {
             "name": "knplabs/gaufrette",
