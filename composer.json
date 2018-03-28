@@ -9,11 +9,6 @@
   "autoload-dev": {
     "psr-4": { "Damax\\Media\\Tests\\": "tests/" }
   },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "0.1.x-dev"
-    }
-  },
   "require": {
     "php": ">=7.1",
     "beberlei/assert": "^2.9",
@@ -33,6 +28,11 @@
   },
   "config": {
     "sort-packages": true
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    }
   },
   "repositories": {
     "damax-common": {
