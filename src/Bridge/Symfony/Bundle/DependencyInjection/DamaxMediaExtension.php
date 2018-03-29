@@ -55,11 +55,14 @@ class DamaxMediaExtension extends ConfigurableExtension
     {
         $storageClass = sprintf('Damax\\Media\\%s\\%sStorage', ucfirst($config['adapter']), ucfirst($config['adapter']));
 
-        $container->register(Storage::class, $storageClass);
-
+        $container
+            ->register(Storage::class, $storageClass)
+            ->setAutowired(true)
+        ;
         $container
             ->register(Keys::class, RandomKeys::class)
             ->setArgument(1, $config['key_length'])
+            ->setAutowired(true)
         ;
 
         if (Configuration::ADAPTER_GAUFRETTE === $config['adapter']) {
@@ -67,8 +70,6 @@ class DamaxMediaExtension extends ConfigurableExtension
                 ->register(FilesystemMap::class)
                 ->setFactory(StreamWrapper::class . '::getFilesystemMap')
             ;
-        } elseif (Configuration::ADAPTER_FLYSYSTEM === $config['adapter']) {
-            // Add mount manager.
         }
 
         return $this;

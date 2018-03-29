@@ -5,6 +5,8 @@
 
     <services>
 
+        <defaults autowire="true" autoconfigure="true" public="false" />
+
         <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Controller\" resource="../../Controller">
             <tag name="controller.service_arguments" />
         </prototype>
@@ -28,6 +30,10 @@
         <!-- Types -->
 
         <service id="Damax\Media\Type\Types" />
+
+        <!-- Storage -->
+
+        <service id="Damax\Media\Flysystem\Registry" class="Damax\Media\Flysystem\ContainerRegistry" />
 
     </services>
 </container>
