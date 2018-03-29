@@ -109,15 +109,13 @@ class GaufretteStorageTest extends TestCase
      */
     public function it_throws_exception_when_writing_media_with_filesystem_exception()
     {
-        $filesystem = $this->createMock(Filesystem::class);
+        $this->filesystems->set('s3', $filesystem = $this->createMock(Filesystem::class));
+
         $filesystem
             ->expects($this->once())
             ->method('write')
             ->willThrowException(new UnsupportedAdapterMethodException())
         ;
-
-        $this->filesystems->set('s3', $filesystem);
-
         $this->keys
             ->method('nextKey')
             ->willReturn('new_file.pdf')

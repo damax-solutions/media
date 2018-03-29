@@ -19,11 +19,17 @@ class ConfigurationTest extends TestCase
     public function it_processes_empty_config()
     {
         $config = [
+            'storage' => [
+                'adapter' => 'flysystem',
+            ],
         ];
 
         $this->assertProcessedConfigurationEquals([$config], [
-            'key_length' => 8,
             'types' => [],
+            'storage' => [
+                'adapter' => 'flysystem',
+                'key_length' => 8,
+            ],
         ]);
     }
 
@@ -33,7 +39,6 @@ class ConfigurationTest extends TestCase
     public function it_processes_config()
     {
         $config = [
-            'key_length' => 12,
             'types' => [
                 'document' => [
                     'storage' => 's3',
@@ -46,10 +51,13 @@ class ConfigurationTest extends TestCase
                     'mime_types' => ['image/jpg', 'image/png', 'image/gif'],
                 ],
             ],
+            'storage' => [
+                'adapter' => 'flysystem',
+                'key_length' => 12,
+            ],
         ];
 
         $this->assertProcessedConfigurationEquals([$config], [
-            'key_length' => 12,
             'types' => [
                 'document' => [
                     'storage' => 's3',
@@ -61,6 +69,10 @@ class ConfigurationTest extends TestCase
                     'max_file_size' => 8388608,
                     'mime_types' => ['image/jpg', 'image/png', 'image/gif'],
                 ],
+            ],
+            'storage' => [
+                'adapter' => 'flysystem',
+                'key_length' => 12,
             ],
         ]);
     }

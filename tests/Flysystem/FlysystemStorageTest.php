@@ -113,18 +113,16 @@ class FlysystemStorageTest extends TestCase
      */
     public function it_throws_exception_when_writing_media_with_filesystem_exception()
     {
-        $filesystem = $this->createMock(FilesystemInterface::class);
-        $filesystem
-            ->expects($this->once())
-            ->method('writeStream')
-            ->willThrowException(new RuntimeException('invalid write'))
-        ;
-
-        $this->mountManager->mountFilesystem('s3', $filesystem);
+        $this->mountManager->mountFilesystem('s3', $filesystem = $this->createMock(FilesystemInterface::class));
 
         $this->keys
             ->method('nextKey')
             ->willReturn('new_file.pdf')
+        ;
+        $filesystem
+            ->expects($this->once())
+            ->method('writeStream')
+            ->willThrowException(new RuntimeException('invalid write'))
         ;
 
         $this->expectException(StorageFailure::class);
@@ -133,10 +131,35 @@ class FlysystemStorageTest extends TestCase
         $this->storage->write(new PendingPdfMedia(), [
             'mime_type' => 'application/pdf',
             'size' => 1024,
-            'stream' => $stream = tmpfile(),
+            'stream' => 'stream',
         ]);
+    }
 
-        fclose($stream);
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_writing_media_with_error()
+    {
+        $this->mountManager->mountFilesystem('s3', $filesystem = $this->createMock(FilesystemInterface::class));
+
+        $this->keys
+            ->method('nextKey')
+            ->willReturn('new_file.pdf')
+        ;
+        $filesystem
+            ->expects($this->once())
+            ->method('writeStream')
+            ->willReturn(false)
+        ;
+
+        $this->expectException(StorageFailure::class);
+        $this->expectExceptionMessage('Unable to write key "document/new_file.pdf".');
+
+        $this->storage->write(new PendingPdfMedia(), [
+            'mime_type' => 'application/pdf',
+            'size' => 1024,
+            'stream' => 'stream',
+        ]);
     }
 
     /**

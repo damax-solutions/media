@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace Damax\Media\Bridge\Symfony\Bundle\DependencyInjection;
 
 use Damax\Media\Domain\Model\Media;
+use Damax\Media\Domain\Storage\Keys;
+use Damax\Media\Domain\Storage\RandomKeys;
+use Damax\Media\Domain\Storage\Storage;
 use Damax\Media\Type\Definition as TypeDefinition;
 use Damax\Media\Type\Types;
+use Gaufrette\FilesystemMap;
+use Gaufrette\StreamWrapper;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -21,10 +26,12 @@ class DamaxMediaExtension extends ConfigurableExtension
         $loader->load('services.xml');
         $loader->load('doctrine-orm.xml');
 
-        $this->configureTypes($config['types'], $container);
+        $this
+            ->configureTypes($config['types'], $container)
+            ->configureStorage($config['storage'], $container)
+        ;
 
         $container->setParameter('damax.media.media_class', Media::class);
-        $container->setParameter('damax.media.key_length', $config['key_length']);
     }
 
     private function configureTypes(array $config, ContainerBuilder $container): self
@@ -40,6 +47,29 @@ class DamaxMediaExtension extends ConfigurableExtension
         }
 
         $container->getDefinition(Types::class)->setArgument(0, $types);
+
+        return $this;
+    }
+
+    private function configureStorage(array $config, ContainerBuilder $container): self
+    {
+        $storageClass = sprintf('Damax\\Media\\%s\\%sStorage', ucfirst($config['adapter']), ucfirst($config['adapter']));
+
+        $container->register(Storage::class, $storageClass);
+
+        $container
+            ->register(Keys::class, RandomKeys::class)
+            ->setArgument(1, $config['key_length'])
+        ;
+
+        if (Configuration::ADAPTER_GAUFRETTE === $config['adapter']) {
+            $container
+                ->register(FilesystemMap::class)
+                ->setFactory(StreamWrapper::class . '::getFilesystemMap')
+            ;
+        } elseif (Configuration::ADAPTER_FLYSYSTEM === $config['adapter']) {
+            // Add mount manager.
+        }
 
         return $this;
     }

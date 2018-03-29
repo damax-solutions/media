@@ -10,6 +10,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    public const ADAPTER_GAUFRETTE = 'gaufrette';
+    public const ADAPTER_FLYSYSTEM = 'flysystem';
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder();
@@ -18,9 +21,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->append($this->typeNode('types'))
-                ->integerNode('key_length')
-                    ->defaultValue(8)
-                ->end()
+                ->append($this->storageNode('storage'))
             ->end()
         ;
 
@@ -54,6 +55,21 @@ class Configuration implements ConfigurationInterface
                             ->cannotBeEmpty()
                         ->end()
                     ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function storageNode(string $name): ArrayNodeDefinition
+    {
+        return (new ArrayNodeDefinition($name))
+            ->isRequired()
+            ->children()
+                ->enumNode('adapter')
+                    ->values([self::ADAPTER_GAUFRETTE, self::ADAPTER_FLYSYSTEM])
+                ->end()
+                ->integerNode('key_length')
+                    ->defaultValue(8)
                 ->end()
             ->end()
         ;
