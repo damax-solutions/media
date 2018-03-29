@@ -123,4 +123,9 @@ final class Manipulations
         self::FORMAT => ['jpg', 'pjpg', 'png', 'gif'],
     ];
     */
+
+    public static function validParams(array $params): bool
+    {
+        return (bool) array_diff(array_flip($params), self::ALL);
+    }
 }

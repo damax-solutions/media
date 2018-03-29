@@ -29,4 +29,14 @@ class MediaInfo
     {
         return $this->mimeType === $info->mimeType && $this->size === $info->size;
     }
+
+    public function image(): bool
+    {
+        return 0 === strpos($this->mimeType, 'image/');
+    }
+
+    public function video(): bool
+    {
+        return 0 === strpos($this->mimeType, 'video/');
+    }
 }

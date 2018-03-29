@@ -11,6 +11,7 @@ use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\MediaDto;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaNotUploaded;
+use Damax\Media\Application\Exception\MediaProcessingFailure;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Application\Service\DownloadService;
 use Damax\Media\Application\Service\MediaService;
@@ -121,13 +122,16 @@ class MediaController
      * @Route("/{id}/process")
      *
      * @throws NotFoundHttpException
+     * @throws BadRequestHttpException
      */
     public function processAction(Request $request, string $id, ProcessService $service): Response
     {
         try {
             return $service->process($id, $request->query->all());
-        } catch (MediaNotFound $e) {
+        } catch (MediaNotFound | MediaNotUploaded $e) {
             throw new NotFoundHttpException();
+        } catch (MediaProcessingFailure $e) {
+            throw new BadRequestHttpException('Processing failure');
         }
     }
 }

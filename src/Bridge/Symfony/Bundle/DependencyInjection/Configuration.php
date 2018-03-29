@@ -104,14 +104,14 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey(true)
                     ->variablePrototype()
                         ->validate()
-                            ->ifTrue(Closure::fromCallable([$this, 'manipulationsValidator']))
+                            ->ifTrue(Closure::fromCallable([Manipulations::class, 'validParams']))
                             ->thenInvalid('Invalid manipulation specified.')
                         ->end()
                     ->end()
                 ->end()
                 ->variableNode('defaults')
                     ->validate()
-                        ->ifTrue(Closure::fromCallable([$this, 'manipulationsValidator']))
+                        ->ifTrue(Closure::fromCallable([Manipulations::class, 'validParams']))
                         ->thenInvalid('Invalid manipulation specified.')
                     ->end()
                 ->end()
@@ -122,10 +122,5 @@ class Configuration implements ConfigurationInterface
     private function toMegabytes(int $size): int
     {
         return $size * 1024 * 1024;
-    }
-
-    private function manipulationsValidator(array $config): bool
-    {
-        return (bool) array_diff(array_flip($config), Manipulations::ALL);
     }
 }

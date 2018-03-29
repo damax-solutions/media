@@ -6,8 +6,10 @@ namespace Damax\Media\Application\Service;
 
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaNotUploaded;
+use Damax\Media\Application\Exception\MediaProcessingFailure;
 use Damax\Media\Domain\Model\MediaRepository;
 use Damax\Media\Flysystem\Registry;
+use Damax\Media\Glide\Manipulations;
 use League\Glide\Responses\SymfonyResponseFactory;
 use League\Glide\ServerFactory;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +31,7 @@ class ProcessService
     /**
      * @throws MediaNotFound
      * @throws MediaNotUploaded
+     * @throws MediaProcessingFailure
      */
     public function process(string $mediaId, array $params): Response
     {
@@ -36,6 +39,14 @@ class ProcessService
 
         if (null === $file = $media->file()) {
             throw MediaNotUploaded::byId($mediaId);
+        }
+
+        if (!$file->image()) {
+            throw new MediaProcessingFailure(sprintf('Only image transformation is supported.'));
+        }
+
+        if (!Manipulations::validParams($params)) {
+            throw new MediaProcessingFailure('Invalid transformation parameters.');
         }
 
         $config = array_merge($this->serverConfig, [
