@@ -14,6 +14,7 @@ use Damax\Media\Application\Exception\MediaNotUploaded;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Application\Service\DownloadService;
 use Damax\Media\Application\Service\MediaService;
+use Damax\Media\Application\Service\ProcessService;
 use Damax\Media\Application\Service\UploadService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -111,6 +112,21 @@ class MediaController
         try {
             return $service->download($id);
         } catch (MediaNotFound | MediaNotUploaded $e) {
+            throw new NotFoundHttpException();
+        }
+    }
+
+    /**
+     * @Method("GET")
+     * @Route("/{id}/process")
+     *
+     * @throws NotFoundHttpException
+     */
+    public function processAction(Request $request, string $id, ProcessService $service): Response
+    {
+        try {
+            return $service->process($id, $request->query->all());
+        } catch (MediaNotFound $e) {
             throw new NotFoundHttpException();
         }
     }

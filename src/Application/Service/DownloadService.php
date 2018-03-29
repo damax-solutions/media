@@ -16,7 +16,6 @@ class DownloadService
 {
     use MediaServiceTrait;
 
-    private $mediaRepository;
     private $storage;
 
     public function __construct(MediaRepository $mediaRepository, Storage $storage)

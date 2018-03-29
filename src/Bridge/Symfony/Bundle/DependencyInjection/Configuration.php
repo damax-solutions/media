@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Damax\Media\Bridge\Symfony\Bundle\DependencyInjection;
 
+use Closure;
+use Damax\Media\Glide\Manipulations;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -13,6 +15,9 @@ class Configuration implements ConfigurationInterface
     public const ADAPTER_GAUFRETTE = 'gaufrette';
     public const ADAPTER_FLYSYSTEM = 'flysystem';
 
+    public const DRIVER_GD = 'gd';
+    public const DRIVER_IMAGICK = 'imagick';
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder();
@@ -20,20 +25,17 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('damax_media');
         $rootNode
             ->children()
-                ->append($this->typeNode('types'))
+                ->append($this->typesNode('types'))
                 ->append($this->storageNode('storage'))
+                ->append($this->glideNode('glide'))
             ->end()
         ;
 
         return $treeBuilder;
     }
 
-    private function typeNode(string $name): ArrayNodeDefinition
+    private function typesNode(string $name): ArrayNodeDefinition
     {
-        $toMegabytes = function (int $size): int {
-            return $size * 1024 * 1024;
-        };
-
         return (new ArrayNodeDefinition($name))
             ->prototype('array')
                 ->children()
@@ -44,7 +46,7 @@ class Configuration implements ConfigurationInterface
                     ->integerNode('max_file_size')
                         ->beforeNormalization()
                             ->always()
-                            ->then($toMegabytes)
+                            ->then(Closure::fromCallable([$this, 'toMegabytes']))
                         ->end()
                         ->isRequired()
                     ->end()
@@ -73,5 +75,57 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+    }
+
+    private function glideNode(string $name): ArrayNodeDefinition
+    {
+        return (new ArrayNodeDefinition($name))
+            ->children()
+                ->enumNode('driver')
+                    ->isRequired()
+                    ->values([self::DRIVER_GD, self::DRIVER_IMAGICK])
+                ->end()
+                ->scalarNode('source')
+                    ->isRequired()
+                ->end()
+                ->scalarNode('cache')
+                    ->isRequired()
+                ->end()
+                ->booleanNode('group_cache_in_folders')
+                    ->defaultTrue()
+                ->end()
+                ->integerNode('max_image_size')
+                    ->beforeNormalization()
+                        ->always()
+                        ->then(Closure::fromCallable([$this, 'toMegabytes']))
+                    ->end()
+                ->end()
+                ->arrayNode('presets')
+                    ->useAttributeAsKey(true)
+                    ->variablePrototype()
+                        ->validate()
+                            ->ifTrue(Closure::fromCallable([$this, 'manipulationsValidator']))
+                            ->thenInvalid('Invalid manipulation specified.')
+                        ->end()
+                    ->end()
+                ->end()
+                ->variableNode('defaults')
+                    ->validate()
+                        ->ifTrue(Closure::fromCallable([$this, 'manipulationsValidator']))
+                        ->thenInvalid('Invalid manipulation specified.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function toMegabytes(int $size): int
+    {
+        return $size * 1024 * 1024;
+    }
+
+    private function manipulationsValidator(array $config): bool
+    {
+        return (bool) array_diff(array_flip($config), Manipulations::ALL);
     }
 }

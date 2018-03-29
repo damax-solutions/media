@@ -77,6 +77,47 @@ class ConfigurationTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     */
+    public function it_processes_glide_config()
+    {
+        $config = [
+            'glide' => [
+                'driver' => 'gd',
+                'source' => 'foo',
+                'cache' => 'bar',
+                'max_image_size' => 4,
+                'presets' => [
+                    'small' => ['w' => 200, 'h' => 200, 'fit' => 'crop'],
+                    'medium' => ['w' => 600, 'h' => 400, 'fit' => 'crop'],
+                ],
+                'defaults' => [
+                    'fm' => 'png',
+                    'q' => 75,
+                ],
+            ],
+        ];
+
+        $this->assertProcessedConfigurationEquals([$config], [
+            'glide' => [
+                'driver' => 'gd',
+                'source' => 'foo',
+                'cache' => 'bar',
+                'group_cache_in_folders' => true,
+                'max_image_size' => 4194304,
+                'presets' => [
+                    'small' => ['w' => 200, 'h' => 200, 'fit' => 'crop'],
+                    'medium' => ['w' => 600, 'h' => 400, 'fit' => 'crop'],
+                ],
+                'defaults' => [
+                    'fm' => 'png',
+                    'q' => 75,
+                ],
+            ],
+        ], 'glide');
+    }
+
     protected function getConfiguration(): ConfigurationInterface
     {
         return new Configuration();
