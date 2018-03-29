@@ -9,6 +9,7 @@ use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Storage\Keys;
 use Damax\Media\Domain\Storage\StorageFailure;
 use Damax\Media\Flysystem\FlysystemStorage;
+use Damax\Media\Flysystem\Registry;
 use Damax\Media\Tests\Domain\Model\FileFactory;
 use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
 use Damax\Media\Type\Definition;
@@ -16,7 +17,6 @@ use Damax\Media\Type\Types;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
-use League\Flysystem\MountManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -25,14 +25,14 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 class FlysystemStorageTest extends TestCase
 {
     /**
-     * @var MountManager
-     */
-    private $mountManager;
-
-    /**
      * @var FilesystemInterface
      */
     private $filesystem;
+
+    /**
+     * @var Registry
+     */
+    private $registry;
 
     /**
      * @var Types
@@ -51,17 +51,36 @@ class FlysystemStorageTest extends TestCase
 
     protected function setUp()
     {
-        $this->filesystem = new Filesystem(new Local(__DIR__ . '/_data'));
+        $this->filesystem = $filesystem = new Filesystem(new Local(__DIR__ . '/_data'));
         $this->filesystem->write('xyz/abc/filename.pdf', '__binary__');
 
-        $this->mountManager = new MountManager(['s3' => $this->filesystem]);
+        $this->registry = new class() implements Registry {
+            private $filesystem;
+
+            public function has(string $name): bool
+            {
+                return 's3' === $name;
+            }
+
+            public function get(string $name): FilesystemInterface
+            {
+                return $this->filesystem;
+            }
+
+            public function set(string $name, FilesystemInterface $filesystem): void
+            {
+                $this->filesystem = $filesystem;
+            }
+        };
+
+        $this->registry->set('s3', $this->filesystem);
 
         $this->types = new Types([
             'document' => new Definition('s3', 2048, ['application/pdf']),
         ]);
 
         $this->keys = $this->createMock(Keys::class);
-        $this->storage = new FlysystemStorage($this->mountManager, $this->types, $this->keys);
+        $this->storage = new FlysystemStorage($this->registry, $this->types, $this->keys);
     }
 
     protected function tearDown()
@@ -101,7 +120,10 @@ class FlysystemStorageTest extends TestCase
         $this->expectException(InvalidMediaInput::class);
         $this->expectExceptionMessage('Storage "s3" is not supported.');
 
-        (new FlysystemStorage(new MountManager(), $this->types, $this->keys))->write(new PendingPdfMedia(), [
+        /** @var Registry $registry */
+        $registry = $this->createMock(Registry::class);
+
+        (new FlysystemStorage($registry, $this->types, $this->keys))->write(new PendingPdfMedia(), [
             'mime_type' => 'application/pdf',
             'size' => 1024,
             'stream' => 'stream',
@@ -113,16 +135,16 @@ class FlysystemStorageTest extends TestCase
      */
     public function it_throws_exception_when_writing_media_with_filesystem_exception()
     {
-        $this->mountManager->mountFilesystem('s3', $filesystem = $this->createMock(FilesystemInterface::class));
+        $this->registry->set('s3', $filesystem = $this->createMock(FilesystemInterface::class));
 
-        $this->keys
-            ->method('nextKey')
-            ->willReturn('new_file.pdf')
-        ;
         $filesystem
             ->expects($this->once())
             ->method('writeStream')
             ->willThrowException(new RuntimeException('invalid write'))
+        ;
+        $this->keys
+            ->method('nextKey')
+            ->willReturn('new_file.pdf')
         ;
 
         $this->expectException(StorageFailure::class);
@@ -140,7 +162,7 @@ class FlysystemStorageTest extends TestCase
      */
     public function it_throws_exception_when_writing_media_with_error()
     {
-        $this->mountManager->mountFilesystem('s3', $filesystem = $this->createMock(FilesystemInterface::class));
+        $this->registry->set('s3', $filesystem = $this->createMock(FilesystemInterface::class));
 
         $this->keys
             ->method('nextKey')
