@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Glide;
+namespace Damax\Media\Domain\Image;
 
-final class Manipulations
+use Damax\Media\Domain\Model\File;
+use Symfony\Component\HttpFoundation\Response;
+
+abstract class Manipulator
 {
     /**
      * Rotates image.
@@ -116,16 +119,10 @@ final class Manipulations
         self::FORMAT,
     ];
 
-    /*
-    const VALUES = [
-        self::ORIENTATION => ['auto', '0', '90', '180', '270'],
-        self::FLIP => ['v', 'h', 'both'],
-        self::FORMAT => ['jpg', 'pjpg', 'png', 'gif'],
-    ];
-    */
-
     public static function validParams(array $params): bool
     {
-        return (bool) array_diff(array_flip($params), self::ALL);
+        return array_diff(array_flip($params), self::ALL) ? false : true;
     }
+
+    abstract public function processFile(File $file, array $params): Response;
 }

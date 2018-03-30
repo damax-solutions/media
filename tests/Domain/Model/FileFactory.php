@@ -12,4 +12,9 @@ class FileFactory
     {
         return new File('application/pdf', 1024, 'xyz/abc/filename.pdf', 's3');
     }
+
+    public function createPng(): File
+    {
+        return new File('image/png', 1024, 'xyz/abc/filename.png', 's3');
+    }
 }

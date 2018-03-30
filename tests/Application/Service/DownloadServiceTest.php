@@ -59,7 +59,7 @@ class DownloadServiceTest extends TestCase
             ->expects($this->once())
             ->method('byId')
             ->with('183702c5-30de-11e8-97f3-005056806fb2')
-            ->willReturn($media = new PendingPdfMedia())
+            ->willReturn(new PendingPdfMedia())
         ;
 
         $this->expectException(MediaNotUploaded::class);

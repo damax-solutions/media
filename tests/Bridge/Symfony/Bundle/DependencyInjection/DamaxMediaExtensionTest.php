@@ -89,11 +89,24 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
                 'adapter' => 'flysystem',
                 'key_length' => 16,
             ],
+            'glide' => [
+                'driver' => 'gd',
+                'source' => 'foo',
+                'cache' => 'bar',
+            ],
         ]);
 
         $this->assertContainerBuilderHasService(Storage::class, FlysystemStorage::class);
         $this->assertContainerBuilderHasService(Keys::class, RandomKeys::class);
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(Keys::class, 1, 16);
+
+        $this->assertContainerBuilderHasParameter('damax.media.glide.server', [
+            'driver' => 'gd',
+            'source' => 'foo',
+            'cache' => 'bar',
+            'group_cache_in_folders' => true,
+            'presets' => [],
+        ]);
     }
 
     protected function getContainerExtensions(): array

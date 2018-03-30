@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Damax\Media\Bridge\Symfony\Bundle\DependencyInjection;
 
 use Closure;
-use Damax\Media\Glide\Manipulations;
+use Damax\Media\Domain\Image\Manipulator;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -104,14 +104,18 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey(true)
                     ->variablePrototype()
                         ->validate()
-                            ->ifTrue(Closure::fromCallable([Manipulations::class, 'validParams']))
+                            ->ifTrue(function (array $config): bool {
+                                return !Manipulator::validParams($config);
+                            })
                             ->thenInvalid('Invalid manipulation specified.')
                         ->end()
                     ->end()
                 ->end()
                 ->variableNode('defaults')
                     ->validate()
-                        ->ifTrue(Closure::fromCallable([Manipulations::class, 'validParams']))
+                        ->ifTrue(function (array $config): bool {
+                            return !Manipulator::validParams($config);
+                        })
                         ->thenInvalid('Invalid manipulation specified.')
                     ->end()
                 ->end()

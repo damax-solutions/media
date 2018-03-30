@@ -33,4 +33,14 @@ class MediaInfoTest extends TestCase
         $this->assertTrue($info1->sameAs($info2));
         $this->assertFalse($info1->sameAs($info3));
     }
+
+    /**
+     * @test
+     */
+    public function it_checks_image()
+    {
+        $this->assertTrue((new MediaInfo('image/png', 1024))->image());
+        $this->assertTrue((new MediaInfo('image/jpg', 1024))->image());
+        $this->assertFalse((new MediaInfo('text/plain', 1024))->image());
+    }
 }

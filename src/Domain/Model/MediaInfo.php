@@ -34,9 +34,4 @@ class MediaInfo
     {
         return 0 === strpos($this->mimeType, 'image/');
     }
-
-    public function video(): bool
-    {
-        return 0 === strpos($this->mimeType, 'video/');
-    }
 }

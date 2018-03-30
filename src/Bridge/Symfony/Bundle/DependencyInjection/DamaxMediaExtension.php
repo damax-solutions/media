@@ -31,6 +31,7 @@ class DamaxMediaExtension extends ConfigurableExtension
             ->configureStorage($config['storage'], $container)
         ;
 
+        $container->setParameter('damax.media.glide.server', $config['glide'] ?? []);
         $container->setParameter('damax.media.media_class', Media::class);
     }
 
