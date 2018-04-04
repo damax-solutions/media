@@ -159,6 +159,21 @@ class GaufretteStorageTest extends TestCase
         $this->assertEquals('__binary__', $this->filesystem->get('document/new_file.pdf')->getContent());
     }
 
+    /**
+     * @test
+     */
+    public function it_removes_media()
+    {
+        $file = (new FileFactory())->createPdf();
+
+        $media = new PendingPdfMedia();
+        $media->upload($file);
+
+        $this->storage->remove($media);
+
+        $this->assertFalse($this->filesystem->has('xyz/abc/filename.pdf'));
+    }
+
     private function getMedia(): Media
     {
         $file = (new FileFactory())->createPdf();

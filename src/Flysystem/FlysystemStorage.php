@@ -39,6 +39,14 @@ class FlysystemStorage extends AbstractStorage
         ;
     }
 
+    protected function removeFile(File $file): void
+    {
+        $this->registry
+            ->get($file->storage())
+            ->delete($file->key())
+        ;
+    }
+
     protected function writeFile(string $key, string $storage, $stream): void
     {
         if (!$this->registry->has($storage)) {

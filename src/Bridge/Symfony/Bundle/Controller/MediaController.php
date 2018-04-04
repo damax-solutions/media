@@ -14,9 +14,9 @@ use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaNotUploaded;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Application\Service\DownloadService;
+use Damax\Media\Application\Service\FactoryService;
 use Damax\Media\Application\Service\ImageService;
 use Damax\Media\Application\Service\MediaService;
-use Damax\Media\Application\Service\UploadService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +41,7 @@ class MediaController
      * @throws BadRequestHttpException
      * @throws UnprocessableEntityHttpException
      */
-    public function createAction(Request $request, MediaService $service, CreateMedia $command, ValidatorInterface $validator): MediaDto
+    public function createAction(Request $request, FactoryService $service, CreateMedia $command, ValidatorInterface $validator): MediaDto
     {
         $command->mimeType = $request->headers->get('X-Upload-Content-Type');
         $command->size = (int) $request->headers->get('X-Upload-Content-Length');
@@ -50,7 +50,7 @@ class MediaController
             throw new BadRequestHttpException(sprintf('%s: %s', $error->getPropertyPath(), $error->getMessage()));
         }
 
-        return $service->create($command);
+        return $service->createMedia($command);
     }
 
     /**
@@ -62,7 +62,7 @@ class MediaController
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
-    public function uploadAction(Request $request, string $id, UploadService $service, ValidatorInterface $validator): MediaDto
+    public function uploadAction(Request $request, string $id, MediaService $service, ValidatorInterface $validator): MediaDto
     {
         if (!($length = $request->headers->get('Content-Length'))) {
             throw new LengthRequiredHttpException();
@@ -88,6 +88,7 @@ class MediaController
     }
 
     /**
+     * @Method("GET")
      * @Route("/{id}")
      * @Serialize()
      *
@@ -115,6 +116,23 @@ class MediaController
         } catch (MediaNotFound | MediaNotUploaded $e) {
             throw new NotFoundHttpException();
         }
+    }
+
+    /**
+     * @Method("DELETE")
+     * @Route("/{id}")
+     *
+     * @throws NotFoundHttpException
+     */
+    public function deleteAction(string $id, MediaService $service): Response
+    {
+        try {
+            $service->delete($id);
+        } catch (MediaNotFound $e) {
+            throw new NotFoundHttpException();
+        }
+
+        return Response::create('', Response::HTTP_NO_CONTENT);
     }
 
     /**

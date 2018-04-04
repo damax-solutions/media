@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Damax\Media\Tests\Glide;
 
 use Damax\Media\Glide\SignedUrlBuilder;
-use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
+use League\Glide\Signatures\SignatureInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -18,6 +18,11 @@ class SignedUrlBuilderTest extends TestCase
     private $urlGenerator;
 
     /**
+     * @var SignatureInterface|MockObject
+     */
+    private $signature;
+
+    /**
      * @var SignedUrlBuilder
      */
     private $urlBuilder;
@@ -25,7 +30,8 @@ class SignedUrlBuilderTest extends TestCase
     protected function setUp()
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->urlBuilder = new SignedUrlBuilder($this->urlGenerator, 'media_image');
+        $this->signature = $this->createMock(SignatureInterface::class);
+        $this->urlBuilder = new SignedUrlBuilder($this->urlGenerator, $this->signature, 'media_image');
     }
 
     /**
@@ -33,15 +39,22 @@ class SignedUrlBuilderTest extends TestCase
      */
     public function it_builds_media_url()
     {
-        $media = new PendingPdfMedia();
-
         $this->urlGenerator
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('generate')
-            ->with('media_image', ['id' => '183702c5-30de-11e8-97f3-005056806fb2', 'w' => 200, 'h' => 200])
-            ->willReturn('generated-url')
+            ->withConsecutive(
+                ['media_image', ['id' => '183702c5-30de-11e8-97f3-005056806fb2']],
+                ['media_image', ['id' => '183702c5-30de-11e8-97f3-005056806fb2', 'signed' => 'params']]
+            )
+            ->willReturnOnConsecutiveCalls('media-url', 'signed-media-url')
+        ;
+        $this->signature
+            ->expects($this->once())
+            ->method('addSignature')
+            ->with('media-url', ['w' => 200, 'h' => 200])
+            ->willReturn(['signed' => 'params'])
         ;
 
-        $this->assertEquals('generated-url', $this->urlBuilder->build($media, ['w' => 200, 'h' => 200]));
+        $this->assertEquals('signed-media-url', $this->urlBuilder->build('183702c5-30de-11e8-97f3-005056806fb2', ['w' => 200, 'h' => 200]));
     }
 }

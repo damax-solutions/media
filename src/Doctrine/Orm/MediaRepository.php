@@ -46,4 +46,10 @@ class MediaRepository implements MediaRepositoryInterface
         $this->em->persist($media);
         $this->em->flush($media);
     }
+
+    public function remove(Media $media): void
+    {
+        $this->em->remove($media);
+        $this->em->flush($media);
+    }
 }

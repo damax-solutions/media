@@ -29,7 +29,7 @@ class ConfigurationTest extends TestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 8,
-                'sign_key' => '%secret%',
+                'sign_key' => '%kernel.secret%',
             ],
         ]);
     }

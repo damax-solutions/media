@@ -69,7 +69,12 @@ class AbstractStorageTest extends TestCase
                 $this->args = func_get_args();
             }
 
-            public function appliedArgs(): array
+            protected function removeFile(File $file): void
+            {
+                $this->args = func_get_args();
+            }
+
+            public function appliedArgs(): ?array
             {
                 return $this->args;
             }
@@ -214,6 +219,31 @@ class AbstractStorageTest extends TestCase
         $this->assertEquals('s3', $file->storage());
 
         $this->assertSame(['document/new_file.pdf', 's3', 'stream'], $this->storage->appliedArgs());
+    }
+
+    /**
+     * @test
+     */
+    public function it_removes_media_with_missing_file()
+    {
+        $this->storage->remove(new PendingPdfMedia());
+
+        $this->assertNull($this->storage->appliedArgs());
+    }
+
+    /**
+     * @test
+     */
+    public function it_removes_media()
+    {
+        $file = (new FileFactory())->createPdf();
+
+        $media = new PendingPdfMedia();
+        $media->upload($file);
+
+        $this->storage->remove($media);
+
+        $this->assertSame([$file], $this->storage->appliedArgs());
     }
 
     private function getMedia(): Media

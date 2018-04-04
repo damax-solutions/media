@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Damax\Media\Tests\Application\Service;
 
-use Damax\Media\Application\Command\CreateMedia;
+use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Application\Dto\MediaDto;
+use Damax\Media\Application\Exception\MediaNotFound;
+use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Application\Service\MediaService;
-use Damax\Media\Domain\Model\Media;
-use Damax\Media\Domain\Model\MediaFactory;
+use Damax\Media\Domain\Exception\InvalidMediaInput;
 use Damax\Media\Domain\Model\MediaRepository;
+use Damax\Media\Domain\Storage\Storage;
+use Damax\Media\Tests\Domain\Model\FileFactory;
 use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,9 +26,9 @@ class MediaServiceTest extends TestCase
     private $mediaRepository;
 
     /**
-     * @var MediaFactory|MockObject
+     * @var Storage|MockObject
      */
-    private $mediaFactory;
+    private $storage;
 
     /**
      * @var Assembler|MockObject
@@ -40,37 +43,9 @@ class MediaServiceTest extends TestCase
     protected function setUp()
     {
         $this->mediaRepository = $this->createMock(MediaRepository::class);
-        $this->mediaFactory = $this->createMock(MediaFactory::class);
+        $this->storage = $this->createMock(Storage::class);
         $this->assembler = $this->createMock(Assembler::class);
-        $this->service = new MediaService($this->mediaRepository, $this->mediaFactory, $this->assembler);
-    }
-
-    /**
-     * @test
-     */
-    public function it_creates_media()
-    {
-        $command = new CreateMedia();
-
-        $this->mediaFactory
-            ->expects($this->once())
-            ->method('create')
-            ->with($this->identicalTo($command))
-            ->willReturn($media = $this->createMock(Media::class))
-        ;
-        $this->mediaRepository
-            ->expects($this->once())
-            ->method('save')
-            ->with($this->identicalTo($media))
-        ;
-        $this->assembler
-            ->expects($this->once())
-            ->method('toMediaDto')
-            ->with($this->identicalTo($media))
-            ->willReturn($dto = new MediaDto())
-        ;
-
-        $this->assertSame($dto, $this->service->create($command));
+        $this->service = new MediaService($this->mediaRepository, $this->storage, $this->assembler);
     }
 
     /**
@@ -94,5 +69,117 @@ class MediaServiceTest extends TestCase
         ;
 
         $this->assertSame($dto, $this->service->fetch('183702c5-30de-11e8-97f3-005056806fb2'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_uploading_media_on_missing_media()
+    {
+        $command = new UploadMedia();
+        $command->mediaId = '183702c5-30de-11e8-97f3-005056806fb2';
+
+        $this->expectException(MediaNotFound::class);
+        $this->expectExceptionMessage('Media by id "183702c5-30de-11e8-97f3-005056806fb2" not found.');
+
+        $this->service->upload($command);
+    }
+
+    /**
+     * @test
+     */
+    public function it_throws_exception_when_uploading_media_on_invalid_media_input()
+    {
+        $command = new UploadMedia();
+        $command->mediaId = '183702c5-30de-11e8-97f3-005056806fb2';
+
+        $this->mediaRepository
+            ->expects($this->once())
+            ->method('byId')
+            ->with('183702c5-30de-11e8-97f3-005056806fb2')
+            ->willReturn($media = new PendingPdfMedia())
+        ;
+        $this->storage
+            ->expects($this->once())
+            ->method('write')
+            ->with($this->identicalTo($media), $this->identicalTo($command))
+            ->willThrowException(new InvalidMediaInput('Invalid media input.'))
+        ;
+
+        $this->expectException(MediaUploadFailure::class);
+        $this->expectExceptionMessage('Invalid media input.');
+
+        $this->service->upload($command);
+    }
+
+    /**
+     * @test
+     */
+    public function it_uploads_media()
+    {
+        $command = new UploadMedia();
+        $command->mediaId = '183702c5-30de-11e8-97f3-005056806fb2';
+
+        $file = (new FileFactory())->createPdf();
+
+        $this->mediaRepository
+            ->expects($this->once())
+            ->method('byId')
+            ->with('183702c5-30de-11e8-97f3-005056806fb2')
+            ->willReturn($media = new PendingPdfMedia())
+        ;
+        $this->storage
+            ->expects($this->once())
+            ->method('write')
+            ->with($this->identicalTo($media), $this->identicalTo($command))
+            ->willReturn($file)
+        ;
+        $this->mediaRepository
+            ->expects($this->once())
+            ->method('save')
+            ->with($this->identicalTo($media))
+        ;
+        $this->assembler
+            ->expects($this->once())
+            ->method('toMediaDto')
+            ->with($this->identicalTo($media))
+            ->willReturn($dto = new MediaDto())
+        ;
+
+        $this->assertSame($dto, $this->service->upload($command));
+
+        $this->assertSame($file, $media->file());
+        $this->assertEquals('uploaded', $media->status());
+    }
+
+    /**
+     * @test
+     */
+    public function it_deletes_media()
+    {
+        $this->mediaRepository
+            ->expects($this->once())
+            ->method('byId')
+            ->with('183702c5-30de-11e8-97f3-005056806fb2')
+            ->willReturn($media = new PendingPdfMedia())
+        ;
+        $this->mediaRepository
+            ->expects($this->once())
+            ->method('remove')
+            ->with($this->identicalTo($media))
+        ;
+        $this->storage
+            ->expects($this->once())
+            ->method('remove')
+            ->with($this->identicalTo($media))
+        ;
+        $this->assembler
+            ->expects($this->once())
+            ->method('toMediaDto')
+            ->with($this->identicalTo($media))
+            ->willReturn($dto = new MediaDto())
+        ;
+
+        $this->assertSame($dto, $this->service->delete('183702c5-30de-11e8-97f3-005056806fb2'));
     }
 }

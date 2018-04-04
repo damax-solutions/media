@@ -13,4 +13,6 @@ interface MediaRepository
     public function byId(UuidInterface $id): ?Media;
 
     public function save(Media $media): void;
+
+    public function remove(Media $media): void;
 }

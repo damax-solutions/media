@@ -210,6 +210,21 @@ class FlysystemStorageTest extends TestCase
         $this->assertEquals('__binary__', $this->filesystem->read('document/new_file.pdf'));
     }
 
+    /**
+     * @test
+     */
+    public function it_removes_media()
+    {
+        $file = (new FileFactory())->createPdf();
+
+        $media = new PendingPdfMedia();
+        $media->upload($file);
+
+        $this->storage->remove($media);
+
+        $this->assertFalse($this->filesystem->has('xyz/abc/filename.pdf'));
+    }
+
     private function getMedia(): Media
     {
         $file = (new FileFactory())->createPdf();

@@ -27,6 +27,8 @@ interface Storage
      */
     public function dump(Media $media, string $filename): void;
 
+    public function remove(Media $media): void;
+
     /**
      * @throws FileAlreadyExists
      * @throws InvalidMediaInput

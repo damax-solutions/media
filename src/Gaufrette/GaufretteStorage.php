@@ -39,6 +39,14 @@ class GaufretteStorage extends AbstractStorage
         return fopen('gaufrette://' . $file->storage() . '/' . $file->key(), 'rb');
     }
 
+    protected function removeFile(File $file): void
+    {
+        $this->filesystems
+            ->get($file->storage())
+            ->delete($file->key())
+        ;
+    }
+
     protected function writeFile(string $key, string $storage, $stream): void
     {
         if (!$this->filesystems->has($storage)) {

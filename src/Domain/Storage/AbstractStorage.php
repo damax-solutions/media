@@ -47,6 +47,15 @@ abstract class AbstractStorage implements Storage
         file_put_contents($filename, $this->read($media));
     }
 
+    public function remove(Media $media): void
+    {
+        if (null === $file = $media->file()) {
+            return;
+        }
+
+        $this->removeFile($file);
+    }
+
     public function write(Media $media, $context = []): File
     {
         Assert::that($context)
@@ -86,6 +95,8 @@ abstract class AbstractStorage implements Storage
      * @return resource
      */
     abstract protected function streamFile(File $file);
+
+    abstract protected function removeFile(File $file): void;
 
     abstract protected function writeFile(string $key, string $storage, $stream): void;
 }
