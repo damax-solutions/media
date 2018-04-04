@@ -37,7 +37,7 @@ class GlideManipulator extends Manipulator
             throw new RuntimeException('Request stack is empty.');
         }
 
-        $this->signature->validateRequest($request->getBasePath(), $params);
+        $this->signature->validateRequest($request->getPathInfo(), $params);
 
         if (null === $file = $media->file()) {
             throw MediaNotReadable::missingFile();

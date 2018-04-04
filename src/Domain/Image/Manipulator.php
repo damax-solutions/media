@@ -101,6 +101,11 @@ abstract class Manipulator
      */
     const FORMAT = 'fm';
 
+    /**
+     * Signature.
+     */
+    const SIGNATURE = 's';
+
     const ALL = [
         self::ORIENTATION,
         self::FLIP,
@@ -119,6 +124,7 @@ abstract class Manipulator
         self::BORDER,
         self::QUALITY,
         self::FORMAT,
+        self::SIGNATURE,
     ];
 
     public static function validParams(array $params): bool

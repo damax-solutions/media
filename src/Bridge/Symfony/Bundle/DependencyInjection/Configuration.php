@@ -75,7 +75,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('sign_key')
                     ->cannotBeEmpty()
-                    ->defaultValue('%secret%')
+                    ->defaultValue('%kernel.secret%')
                 ->end()
             ->end()
         ;

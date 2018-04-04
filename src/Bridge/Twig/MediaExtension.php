@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Damax\Media\Bridge\Twig;
 
 use Damax\Media\Domain\Image\UrlBuilder;
-use Damax\Media\Domain\Model\Media;
 use Twig\TwigFunction;
 
 class MediaExtension extends \Twig_Extension
@@ -23,12 +22,12 @@ class MediaExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('media_url', [$this, 'buildMediaUrl']),
+            new TwigFunction('media_image_url', [$this, 'buildImageUrl']),
         ];
     }
 
-    public function buildMediaUrl(Media $media, array $params = []): string
+    public function buildImageUrl(string $mediaId, array $params = []): string
     {
-        return $this->urlBuilder->build($media, $params);
+        return $this->urlBuilder->build($mediaId, $params);
     }
 }

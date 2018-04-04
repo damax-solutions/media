@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Damax\Media\Bridge\Symfony\Bundle\DependencyInjection;
 
+use Damax\Media\Domain\Image\UrlBuilder;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Storage\Keys;
 use Damax\Media\Domain\Storage\RandomKeys;
 use Damax\Media\Domain\Storage\Storage;
+use Damax\Media\Glide\SignedUrlBuilder;
 use Damax\Media\Type\Definition as TypeDefinition;
 use Damax\Media\Type\Types;
 use Gaufrette\FilesystemMap;
@@ -77,6 +79,10 @@ class DamaxMediaExtension extends ConfigurableExtension
             $container
                 ->register(SignatureInterface::class, Signature::class)
                 ->addArgument($config['sign_key'])
+                ->setAutowired(true)
+            ;
+            $container
+                ->register(UrlBuilder::class, SignedUrlBuilder::class)
                 ->setAutowired(true)
             ;
         }

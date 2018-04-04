@@ -5,22 +5,30 @@ declare(strict_types=1);
 namespace Damax\Media\Glide;
 
 use Damax\Media\Domain\Image\UrlBuilder;
-use Damax\Media\Domain\Model\Media;
+use League\Glide\Signatures\SignatureInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignedUrlBuilder implements UrlBuilder
 {
     private $urlGenerator;
+    private $signature;
     private $routeName;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, string $routeName)
+    public function __construct(UrlGeneratorInterface $urlGenerator, SignatureInterface $signature, string $routeName = 'media_image')
     {
         $this->urlGenerator = $urlGenerator;
+        $this->signature = $signature;
         $this->routeName = $routeName;
     }
 
-    public function build(Media $media, array $params): string
+    public function build(string $mediaId, array $params): string
     {
-        return $this->urlGenerator->generate($this->routeName, array_merge($params, ['id' => $media->id()]));
+        $id = ['id' => $mediaId];
+
+        $url = $this->urlGenerator->generate($this->routeName, $id);
+
+        $params = $this->signature->addSignature($url, $params);
+
+        return $this->urlGenerator->generate($this->routeName, $params + $id);
     }
 }
