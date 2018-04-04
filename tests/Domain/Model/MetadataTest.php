@@ -16,7 +16,7 @@ class MetadataTest extends TestCase
 
     protected function setUp()
     {
-        $this->metadata = new Metadata(['foo' => 'bar', 'baz' => 'qux']);
+        $this->metadata = Metadata::fromArray(['foo' => 'bar', 'baz' => 'qux']);
     }
 
     /**
@@ -46,5 +46,27 @@ class MetadataTest extends TestCase
     {
         $this->assertEquals(['foo' => 'bar', 'baz' => 'qux'], $this->metadata->all());
         $this->assertEquals('{"foo":"bar","baz":"qux"}', json_encode($this->metadata));
+    }
+
+    /**
+     * @test
+     */
+    public function it_adds_data()
+    {
+        $metadata = $this->metadata->add(['abc' => 'xyz']);
+
+        $this->assertNotSame($metadata, $this->metadata);
+        $this->assertEquals(['foo' => 'bar', 'baz' => 'qux', 'abc' => 'xyz'], $metadata->all());
+    }
+
+    /**
+     * @test
+     */
+    public function it_merges_metadata()
+    {
+        $metadata = $this->metadata->merge(Metadata::fromArray(['abc' => 'xyz']));
+
+        $this->assertNotSame($metadata, $this->metadata);
+        $this->assertEquals(['foo' => 'bar', 'baz' => 'qux', 'abc' => 'xyz'], $metadata->all());
     }
 }

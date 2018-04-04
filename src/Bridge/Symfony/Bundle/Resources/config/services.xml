@@ -33,6 +33,10 @@
 
         <service id="Damax\Media\Domain\Storage\ExtensionGuesser" class="Damax\Media\Domain\Storage\SymfonyExtensionGuesser" />
 
+        <service id="Damax\Media\Domain\Image\Reader" class="Damax\Media\Domain\Image\Collector">
+            <argument type="tagged" tag="damax.media.reader" />
+        </service>
+
         <!-- Types -->
 
         <service id="Damax\Media\Type\Types" />
@@ -42,6 +46,12 @@
         <service id="Damax\Media\Flysystem\Registry" class="Damax\Media\Flysystem\ContainerRegistry" />
 
         <service id="Damax\Media\Domain\Image\Manipulator" class="Damax\Media\Glide\GlideManipulator" />
+
+        <!-- Reader -->
+
+        <service id="Damax\Media\Metadata\GdImageReader">
+            <tag name="damax.media.reader" />
+        </service>
 
     </services>
 </container>

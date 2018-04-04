@@ -10,9 +10,14 @@ final class Metadata implements JsonSerializable
 {
     private $data;
 
-    public function __construct(array $data)
+    public static function blank(): self
     {
-        $this->data = $data;
+        return self::fromArray([]);
+    }
+
+    public static function fromArray(array $data): self
+    {
+        return new self($data);
     }
 
     public function has(string $key): bool
@@ -30,8 +35,23 @@ final class Metadata implements JsonSerializable
         return $this->data;
     }
 
+    public function add(array $data): self
+    {
+        return new self(array_merge($this->data, $data));
+    }
+
+    public function merge(self $metadata): self
+    {
+        return new self(array_merge($this->data, $metadata->data));
+    }
+
     public function jsonSerialize(): array
     {
         return $this->data;
+    }
+
+    private function __construct(array $data)
+    {
+        $this->data = $data;
     }
 }

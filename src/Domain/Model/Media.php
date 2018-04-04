@@ -28,6 +28,11 @@ class Media
      */
     private $file;
 
+    /**
+     * @var Metadata
+     */
+    private $metadata;
+
     public function __construct(UuidInterface $id, string $type, string $name, MediaInfo $info, User $user = null)
     {
         $this->id = $id;
@@ -88,10 +93,20 @@ class Media
         return $this->file && $this->file->defined() ? $this->file : null;
     }
 
-    public function upload(File $file, User $uploader = null)
+    public function metadata(): Metadata
+    {
+        if (is_array($this->metadata)) {
+            $this->metadata = Metadata::fromArray($this->metadata);
+        }
+
+        return $this->metadata;
+    }
+
+    public function upload(File $file, Metadata $metadata = null, User $uploader = null)
     {
         $this->status = self::STATUS_UPLOADED;
         $this->file = $file;
+        $this->metadata = $metadata ?? Metadata::blank();
         $this->updatedAt = new DateTimeImmutable();
         $this->updatedBy = $uploader;
     }

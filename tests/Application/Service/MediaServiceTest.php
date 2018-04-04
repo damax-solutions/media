@@ -11,7 +11,9 @@ use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Application\Service\MediaService;
 use Damax\Media\Domain\Exception\InvalidMediaInput;
+use Damax\Media\Domain\Metadata\Reader;
 use Damax\Media\Domain\Model\MediaRepository;
+use Damax\Media\Domain\Model\Metadata;
 use Damax\Media\Domain\Storage\Storage;
 use Damax\Media\Tests\Domain\Model\FileFactory;
 use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
@@ -31,6 +33,11 @@ class MediaServiceTest extends TestCase
     private $storage;
 
     /**
+     * @var Metadata|MockObject
+     */
+    private $metadata;
+
+    /**
      * @var Assembler|MockObject
      */
     private $assembler;
@@ -44,8 +51,9 @@ class MediaServiceTest extends TestCase
     {
         $this->mediaRepository = $this->createMock(MediaRepository::class);
         $this->storage = $this->createMock(Storage::class);
+        $this->metadata = $this->createMock(Reader::class);
         $this->assembler = $this->createMock(Assembler::class);
-        $this->service = new MediaService($this->mediaRepository, $this->storage, $this->assembler);
+        $this->service = new MediaService($this->mediaRepository, $this->storage, $this->metadata, $this->assembler);
     }
 
     /**
