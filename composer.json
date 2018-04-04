@@ -27,7 +27,8 @@
     "sensio/framework-extra-bundle": "^5.1",
     "symfony/phpunit-bridge": "^4.0",
     "symfony/serializer": "^4.0",
-    "symfony/validator": "^4.0"
+    "symfony/validator": "^4.0",
+    "twig/twig": "^2.4"
   },
   "config": {
     "sort-packages": true

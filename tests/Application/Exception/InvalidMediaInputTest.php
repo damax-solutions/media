@@ -28,4 +28,14 @@ class InvalidMediaInputTest extends TestCase
 
         $this->assertEquals('Storage "s3" is not supported.', $e->getMessage());
     }
+
+    /**
+     * @test
+     */
+    public function it_creates_with_unsupported_mime_type()
+    {
+        $e = InvalidMediaInput::unsupportedMimeType('application/pdf');
+
+        $this->assertEquals('Media with mime type "application/pdf" is not supported.', $e->getMessage());
+    }
 }

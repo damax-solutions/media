@@ -17,4 +17,9 @@ class InvalidMediaInput extends RuntimeException
     {
         return new self(sprintf('Storage "%s" is not supported.', $storage));
     }
+
+    public static function unsupportedMimeType(string $mimeType): self
+    {
+        return new self(sprintf('Media with mime type "%s" is not supported.', $mimeType));
+    }
 }

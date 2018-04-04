@@ -119,7 +119,7 @@ class MediaController
 
     /**
      * @Method("GET")
-     * @Route("/{id}/image")
+     * @Route("/{id}/image", name="media_image")
      *
      * @throws NotFoundHttpException
      * @throws BadRequestHttpException

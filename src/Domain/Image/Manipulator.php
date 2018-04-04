@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Image;
 
-use Damax\Media\Domain\Model\File;
+use Damax\Media\Domain\Exception\InvalidMediaInput;
+use Damax\Media\Domain\Exception\MediaNotReadable;
+use Damax\Media\Domain\Model\Media;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class Manipulator
@@ -124,5 +126,9 @@ abstract class Manipulator
         return array_diff(array_flip($params), self::ALL) ? false : true;
     }
 
-    abstract public function processFile(File $file, array $params): Response;
+    /**
+     * @throws MediaNotReadable
+     * @throws InvalidMediaInput
+     */
+    abstract public function processImage(Media $media, array $params): Response;
 }

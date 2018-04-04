@@ -7,9 +7,11 @@ namespace Damax\Media\Application\Service;
 use Damax\Media\Application\Exception\ImageProcessingFailure;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaNotUploaded;
+use Damax\Media\Domain\Exception\MediaNotReadable;
 use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Model\MediaRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class ImageService
 {
@@ -30,20 +32,18 @@ class ImageService
      */
     public function process(string $mediaId, array $params): Response
     {
-        $media = $this->getMedia($mediaId);
-
-        if (null === $file = $media->file()) {
-            throw MediaNotUploaded::byId($mediaId);
-        }
-
-        if (!$file->image()) {
-            throw new ImageProcessingFailure('Only image transformation is supported.');
-        }
-
         if (!Manipulator::validParams($params)) {
             throw new ImageProcessingFailure('Invalid transformation parameters.');
         }
 
-        return $this->manipulator->processFile($file, $params);
+        $media = $this->getMedia($mediaId);
+
+        try {
+            return $this->manipulator->processImage($media, $params);
+        } catch (MediaNotReadable $e) {
+            throw MediaNotUploaded::byId($mediaId);
+        } catch (Throwable $e) {
+            throw new ImageProcessingFailure('Manipulation failed.', 0, $e);
+        }
     }
 }
