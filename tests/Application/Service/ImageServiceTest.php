@@ -57,27 +57,6 @@ class ImageServiceTest extends TestCase
     /**
      * @test
      */
-//    public function it_throws_exception_when_processing_unsupported_media()
-//    {
-//        $media = new PendingPdfMedia();
-//        $media->upload((new FileFactory())->createPdf());
-//
-//        $this->mediaRepository
-//            ->expects($this->once())
-//            ->method('byId')
-//            ->with('183702c5-30de-11e8-97f3-005056806fb2')
-//            ->willReturn($media)
-//        ;
-//
-//        $this->expectException(ImageProcessingFailure::class);
-//        $this->expectExceptionMessage('Only image transformation is supported.');
-//
-//        $this->service->process('183702c5-30de-11e8-97f3-005056806fb2', ['w' => 200, 'h' => 200]);
-//    }
-
-    /**
-     * @test
-     */
     public function it_throws_exception_when_processing_media_with_invalid_params()
     {
         $this->expectException(ImageProcessingFailure::class);

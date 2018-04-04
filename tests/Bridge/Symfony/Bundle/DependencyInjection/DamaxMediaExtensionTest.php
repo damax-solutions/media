@@ -16,6 +16,7 @@ use Damax\Media\Gaufrette\GaufretteStorage;
 use Damax\Media\Type\Types;
 use Gaufrette\FilesystemMap;
 use Gaufrette\StreamWrapper;
+use League\Glide\Signatures\SignatureInterface;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -88,6 +89,7 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 16,
+                'sign_key' => 'Qwerty12',
             ],
             'glide' => [
                 'driver' => 'gd',
@@ -99,6 +101,7 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasService(Storage::class, FlysystemStorage::class);
         $this->assertContainerBuilderHasService(Keys::class, RandomKeys::class);
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(Keys::class, 1, 16);
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument(SignatureInterface::class, 0, 'Qwerty12');
 
         $this->assertContainerBuilderHasParameter('damax.media.glide.server', [
             'driver' => 'gd',

@@ -17,6 +17,9 @@ class MediaExtension extends \Twig_Extension
         $this->urlBuilder = $urlBuilder;
     }
 
+    /**
+     * @return TwigFunction[]
+     */
     public function getFunctions(): array
     {
         return [

@@ -12,6 +12,8 @@ use Damax\Media\Type\Definition as TypeDefinition;
 use Damax\Media\Type\Types;
 use Gaufrette\FilesystemMap;
 use Gaufrette\StreamWrapper;
+use League\Glide\Signatures\Signature;
+use League\Glide\Signatures\SignatureInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -70,6 +72,12 @@ class DamaxMediaExtension extends ConfigurableExtension
             $container
                 ->register(FilesystemMap::class)
                 ->setFactory(StreamWrapper::class . '::getFilesystemMap')
+            ;
+        } else {
+            $container
+                ->register(SignatureInterface::class, Signature::class)
+                ->addArgument($config['sign_key'])
+                ->setAutowired(true)
             ;
         }
 

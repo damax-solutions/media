@@ -29,6 +29,7 @@ class ConfigurationTest extends TestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 8,
+                'sign_key' => '%secret%',
             ],
         ]);
     }
@@ -54,6 +55,7 @@ class ConfigurationTest extends TestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 12,
+                'sign_key' => 'Qwerty12',
             ],
         ];
 
@@ -73,6 +75,7 @@ class ConfigurationTest extends TestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 12,
+                'sign_key' => 'Qwerty12',
             ],
         ]);
     }

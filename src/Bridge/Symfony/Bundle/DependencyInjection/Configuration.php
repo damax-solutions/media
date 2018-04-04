@@ -73,6 +73,10 @@ class Configuration implements ConfigurationInterface
                 ->integerNode('key_length')
                     ->defaultValue(8)
                 ->end()
+                ->scalarNode('sign_key')
+                    ->cannotBeEmpty()
+                    ->defaultValue('%secret%')
+                ->end()
             ->end()
         ;
     }
