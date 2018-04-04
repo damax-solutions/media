@@ -13,7 +13,7 @@
         <field name="name" />
         <field name="createdAt" type="datetimetz" />
         <field name="updatedAt" type="datetimetz" />
-        <field name="metadata" type="json" />
+        <field name="metadata" type="json" nullable="true" />
 
         <embedded name="info" class="MediaInfo" />
         <embedded name="file" class="File" />

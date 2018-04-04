@@ -11,12 +11,16 @@ class GdImageReader implements Reader
 {
     public function supports($context): bool
     {
+        if (!extension_loaded('gd')) {
+            return false;
+        }
+
         return 0 === strpos($context['mime_type'] ?? 'plain/text', 'image/');
     }
 
     public function extract($context): Metadata
     {
-        $image = imagecreatefromstring($context['stream']);
+        $image = imagecreatefromstring(stream_get_contents($context['stream']));
 
         $data = [
             'width' => imagesx($image),

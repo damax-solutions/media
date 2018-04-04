@@ -20,6 +20,7 @@ class Assembler
         $dto->size = $media->info()->size();
         $dto->createdAt = $media->createdAt();
         $dto->updatedAt = $media->updatedAt();
+        $dto->metadata = $media->metadata()->all();
 
         return $dto;
     }

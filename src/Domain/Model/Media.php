@@ -97,6 +97,8 @@ class Media
     {
         if (is_array($this->metadata)) {
             $this->metadata = Metadata::fromArray($this->metadata);
+        } elseif (is_null($this->metadata)) {
+            $this->metadata = Metadata::blank();
         }
 
         return $this->metadata;

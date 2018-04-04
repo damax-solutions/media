@@ -33,7 +33,7 @@
 
         <service id="Damax\Media\Domain\Storage\ExtensionGuesser" class="Damax\Media\Domain\Storage\SymfonyExtensionGuesser" />
 
-        <service id="Damax\Media\Domain\Image\Reader" class="Damax\Media\Domain\Image\Collector">
+        <service id="Damax\Media\Domain\Metadata\Reader" class="Damax\Media\Domain\Metadata\Collector">
             <argument type="tagged" tag="damax.media.reader" />
         </service>
 

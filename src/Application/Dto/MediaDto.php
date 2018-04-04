@@ -47,4 +47,9 @@ class MediaDto
      * @var DateTimeInterface
      */
     public $updatedAt;
+
+    /**
+     * @var array
+     */
+    public $metadata;
 }
