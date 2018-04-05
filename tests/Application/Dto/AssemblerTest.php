@@ -36,5 +36,6 @@ class AssemblerTest extends TestCase
         $this->assertEquals(1024, $dto->size);
         $this->assertInstanceOf(DateTimeInterface::class, $dto->createdAt);
         $this->assertInstanceOf(DateTimeInterface::class, $dto->updatedAt);
+        $this->assertEquals([], $dto->metadata);
     }
 }
