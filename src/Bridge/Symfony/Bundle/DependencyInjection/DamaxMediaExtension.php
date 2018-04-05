@@ -106,6 +106,7 @@ class DamaxMediaExtension extends ConfigurableExtension
         $container
             ->register(MediaExtension::class)
             ->addTag('twig.extension')
+            ->setAutowired(true)
         ;
         $container
             ->register(Manipulator::class, GlideManipulator::class)

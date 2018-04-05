@@ -66,9 +66,11 @@ class MediaController
 
         $command = new UploadMedia();
         $command->mediaId = $id;
-        $command->stream = $request->getContent(true);
+        $command->stream = fopen('php://temp', 'wb');
         $command->mimeType = $request->headers->get('Content-Type');
         $command->size = (int) $length;
+
+        stream_copy_to_stream($request->getContent(true), $command->stream);
 
         foreach ($validator->validate($command) as $error) {
             throw new BadRequestHttpException(sprintf('%s: %s', $error->getPropertyPath(), $error->getMessage()));

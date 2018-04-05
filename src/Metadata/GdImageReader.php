@@ -20,6 +20,8 @@ class GdImageReader implements Reader
 
     public function extract($context): Metadata
     {
+        rewind($context['stream']);
+
         $image = imagecreatefromstring(stream_get_contents($context['stream']));
 
         $data = [
