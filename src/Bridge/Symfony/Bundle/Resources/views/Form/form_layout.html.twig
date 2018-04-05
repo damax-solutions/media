@@ -1,0 +1,29 @@
+{% block damax_media_widget %}
+    <div class="row">
+        <div class="col-sm-3">
+
+            {% if data %}
+                <div class="card">
+                    {% if media_info.image %}
+                        <img class="card-img-top" src="{{ media_image_url(media_id, image_params) }}" alt="">
+                    {% endif %}
+
+                    <div class="card-body">
+                        <p class="card-text">{{ media_name }}</p>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">{{ media_info.mimeType }}</li>
+                        <li class="list-group-item">{{ media_info.size | media_file_size }}</li>
+                    </ul>
+
+                    <div class="card-body">
+                        <a class="card-link" href="{{ path('media_download', { id: media_id }) }}">{{ 'button.download' | trans({}, 'damax-media') }}</a>
+                        <a class="card-link text-danger float-right" href="{{ path('media_delete', { id: media_id }) }}">{{ 'button.delete' | trans({}, 'damax-media') }}</a>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

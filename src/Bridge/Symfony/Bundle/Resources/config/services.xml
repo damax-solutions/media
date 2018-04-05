@@ -11,6 +11,10 @@
             <tag name="controller.service_arguments" />
         </prototype>
 
+        <!-- Forms -->
+
+        <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Form\" resource="../../Form" />
+
         <!-- Validators -->
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Validator\Constraints\" resource="../../../Validator/Constraints" />
@@ -30,6 +34,8 @@
         <service id="Damax\Media\Domain\Metadata\Reader" class="Damax\Media\Domain\Metadata\Collector">
             <argument type="tagged" tag="damax.media.reader" />
         </service>
+
+        <service id="Damax\Media\Domain\FileFormatter" />
 
         <!-- Types -->
 

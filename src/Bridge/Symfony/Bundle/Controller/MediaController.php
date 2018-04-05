@@ -103,7 +103,7 @@ class MediaController
 
     /**
      * @Method("DELETE")
-     * @Route("/{id}")
+     * @Route("/{id}", name="media_delete")
      *
      * @throws NotFoundHttpException
      */

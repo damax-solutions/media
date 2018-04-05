@@ -15,6 +15,11 @@ final class Types
         }
     }
 
+    public function names(): array
+    {
+        return array_keys($this->definitions);
+    }
+
     public function addDefinition(string $name, Definition $definition): void
     {
         $this->definitions[$name] = $definition;
