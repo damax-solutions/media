@@ -73,10 +73,6 @@ class Configuration implements ConfigurationInterface
                 ->integerNode('key_length')
                     ->defaultValue(8)
                 ->end()
-                ->scalarNode('sign_key')
-                    ->cannotBeEmpty()
-                    ->defaultValue('%kernel.secret%')
-                ->end()
             ->end()
         ;
     }
@@ -103,6 +99,10 @@ class Configuration implements ConfigurationInterface
                         ->always()
                         ->then(Closure::fromCallable([$this, 'toMegabytes']))
                     ->end()
+                ->end()
+                ->scalarNode('sign_key')
+                    ->cannotBeEmpty()
+                    ->defaultValue('%kernel.secret%')
                 ->end()
                 ->arrayNode('presets')
                     ->useAttributeAsKey(true)

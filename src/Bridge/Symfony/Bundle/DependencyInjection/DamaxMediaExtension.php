@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Damax\Media\Bridge\Symfony\Bundle\DependencyInjection;
 
+use Damax\Media\Application\Service\ImageService;
+use Damax\Media\Bridge\Twig\MediaExtension;
+use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Image\UrlBuilder;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Storage\Keys;
 use Damax\Media\Domain\Storage\RandomKeys;
 use Damax\Media\Domain\Storage\Storage;
+use Damax\Media\Glide\GlideManipulator;
 use Damax\Media\Glide\SignedUrlBuilder;
 use Damax\Media\Type\Definition as TypeDefinition;
 use Damax\Media\Type\Types;
@@ -35,7 +39,12 @@ class DamaxMediaExtension extends ConfigurableExtension
             ->configureStorage($config['storage'], $container)
         ;
 
-        $container->setParameter('damax.media.glide.server', $config['glide'] ?? []);
+        if (!empty($config['glide'])) {
+            $this->configureGlide($config['glide'], $container);
+        } else {
+            $container->removeDefinition(ImageService::class);
+        }
+
         $container->setParameter('damax.media.media_class', Media::class);
     }
 
@@ -75,17 +84,34 @@ class DamaxMediaExtension extends ConfigurableExtension
                 ->register(FilesystemMap::class)
                 ->setFactory(StreamWrapper::class . '::getFilesystemMap')
             ;
-        } else {
-            $container
-                ->register(SignatureInterface::class, Signature::class)
-                ->addArgument($config['sign_key'])
-                ->setAutowired(true)
-            ;
-            $container
-                ->register(UrlBuilder::class, SignedUrlBuilder::class)
-                ->setAutowired(true)
-            ;
         }
+
+        return $this;
+    }
+
+    private function configureGlide(array $config, ContainerBuilder $container): self
+    {
+        $serverParams = $config;
+        unset($serverParams['sign_key']);
+
+        $container
+            ->register(SignatureInterface::class, Signature::class)
+            ->addArgument($config['sign_key'])
+            ->setAutowired(true)
+        ;
+        $container
+            ->register(UrlBuilder::class, SignedUrlBuilder::class)
+            ->setAutowired(true)
+        ;
+        $container
+            ->register(MediaExtension::class)
+            ->addTag('twig.extension')
+        ;
+        $container
+            ->register(Manipulator::class, GlideManipulator::class)
+            ->setArgument(3, $serverParams)
+            ->setAutowired(true)
+        ;
 
         return $this;
     }

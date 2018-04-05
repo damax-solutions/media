@@ -29,7 +29,6 @@ class ConfigurationTest extends TestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 8,
-                'sign_key' => '%kernel.secret%',
             ],
         ]);
     }
@@ -55,7 +54,6 @@ class ConfigurationTest extends TestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 12,
-                'sign_key' => 'Qwerty12',
             ],
         ];
 
@@ -75,7 +73,6 @@ class ConfigurationTest extends TestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 12,
-                'sign_key' => 'Qwerty12',
             ],
         ]);
     }
@@ -109,6 +106,7 @@ class ConfigurationTest extends TestCase
                 'cache' => 'bar',
                 'group_cache_in_folders' => true,
                 'max_image_size' => 4194304,
+                'sign_key' => '%kernel.secret%',
                 'presets' => [
                     'small' => ['w' => 200, 'h' => 200, 'fit' => 'crop'],
                     'medium' => ['w' => 600, 'h' => 400, 'fit' => 'crop'],

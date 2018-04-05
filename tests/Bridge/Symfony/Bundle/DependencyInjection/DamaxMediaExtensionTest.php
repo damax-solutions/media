@@ -6,6 +6,7 @@ namespace Damax\Media\Tests\Bridge\Symfony\Bundle\DependencyInjection;
 
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Bridge\Symfony\Bundle\DependencyInjection\DamaxMediaExtension;
+use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Image\UrlBuilder;
 use Damax\Media\Domain\Model\ConfigurableMediaFactory;
 use Damax\Media\Domain\Model\MediaFactory;
@@ -91,12 +92,12 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
             'storage' => [
                 'adapter' => 'flysystem',
                 'key_length' => 16,
-                'sign_key' => 'Qwerty12',
             ],
             'glide' => [
                 'driver' => 'gd',
                 'source' => 'foo',
                 'cache' => 'bar',
+                'sign_key' => 'Qwerty12',
             ],
         ]);
 
@@ -105,8 +106,7 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(Keys::class, 1, 16);
         $this->assertContainerBuilderHasServiceDefinitionWithArgument(SignatureInterface::class, 0, 'Qwerty12');
         $this->assertContainerBuilderHasService(UrlBuilder::class, SignedUrlBuilder::class);
-
-        $this->assertContainerBuilderHasParameter('damax.media.glide.server', [
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument(Manipulator::class, 3, [
             'driver' => 'gd',
             'source' => 'foo',
             'cache' => 'bar',

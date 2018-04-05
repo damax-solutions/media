@@ -5,9 +5,7 @@
 
     <services>
 
-        <defaults autowire="true" autoconfigure="true" public="false">
-            <bind key="$serverConfig">%damax.media.glide.server%</bind>
-        </defaults>
+        <defaults autowire="true" autoconfigure="true" public="false" />
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Controller\" resource="../../Controller">
             <tag name="controller.service_arguments" />
@@ -16,10 +14,6 @@
         <!-- Validators -->
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Validator\Constraints\" resource="../../../Validator/Constraints" />
-
-        <!-- Twig -->
-
-        <prototype namespace="Damax\Media\Bridge\Twig\" resource="../../../../Twig" />
 
         <!-- Application -->
 
@@ -44,8 +38,6 @@
         <!-- Flysystem -->
 
         <service id="Damax\Media\Flysystem\Registry" class="Damax\Media\Flysystem\ContainerRegistry" />
-
-        <service id="Damax\Media\Domain\Image\Manipulator" class="Damax\Media\Glide\GlideManipulator" />
 
         <!-- Reader -->
 
