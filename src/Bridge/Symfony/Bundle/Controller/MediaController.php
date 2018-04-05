@@ -9,13 +9,9 @@ use Damax\Common\Bridge\Symfony\Bundle\Annotation\Serialize;
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\MediaDto;
-use Damax\Media\Application\Exception\ImageProcessingFailure;
 use Damax\Media\Application\Exception\MediaNotFound;
-use Damax\Media\Application\Exception\MediaNotUploaded;
 use Damax\Media\Application\Exception\MediaUploadFailure;
-use Damax\Media\Application\Service\DownloadService;
 use Damax\Media\Application\Service\FactoryService;
-use Damax\Media\Application\Service\ImageService;
 use Damax\Media\Application\Service\MediaService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -104,21 +100,6 @@ class MediaController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/{id}/download")
-     *
-     * @throws NotFoundHttpException
-     */
-    public function downloadAction(string $id, DownloadService $service): Response
-    {
-        try {
-            return $service->download($id);
-        } catch (MediaNotFound | MediaNotUploaded $e) {
-            throw new NotFoundHttpException();
-        }
-    }
-
-    /**
      * @Method("DELETE")
      * @Route("/{id}")
      *
@@ -133,23 +114,5 @@ class MediaController
         }
 
         return Response::create('', Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @Method("GET")
-     * @Route("/{id}/image", name="media_image")
-     *
-     * @throws NotFoundHttpException
-     * @throws BadRequestHttpException
-     */
-    public function imageAction(Request $request, string $id, ImageService $service): Response
-    {
-        try {
-            return $service->process($id, $request->query->all());
-        } catch (MediaNotFound | MediaNotUploaded $e) {
-            throw new NotFoundHttpException();
-        } catch (ImageProcessingFailure $e) {
-            throw new BadRequestHttpException('Processing failure');
-        }
     }
 }
