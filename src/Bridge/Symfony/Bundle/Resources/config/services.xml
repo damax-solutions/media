@@ -11,6 +11,8 @@
             <tag name="controller.service_arguments" />
         </prototype>
 
+        <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Listener\" resource="../../Listener" />
+
         <!-- Forms -->
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Form\" resource="../../Form" />

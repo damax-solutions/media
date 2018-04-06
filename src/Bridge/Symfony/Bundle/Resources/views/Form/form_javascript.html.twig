@@ -1,11 +1,9 @@
 {% block damax_media_javascript %}
     <script type="text/javascript">
+        $(function () {
+            var $delete = function () {
+                var $elem = $(this)
 
-        // Delete media
-        $('#{{ id }} .media-delete').each(function () {
-            var $elem = $(this)
-
-            $elem.click(function () {
                 if (confirm('{{ 'media.message.confirm_removal' | trans({}, 'damax-media') }}')) {
                     $.ajax({
                         url: $elem.attr('href'),
@@ -19,43 +17,60 @@
                 }
 
                 return false
-            })
-        })
-
-        // Create media
-        $('#{{ id }}-upload .media-upload').click(function () {
-            var $file = $('#{{ id }}-upload .media-file')
-            var files = $file.prop('files')
-
-            if (files.length) {
-                var file = files[0]
-
-                $.ajax({
-                    url: '{{ path('media_create') }}',
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ type: '{{ type_name }}', name: file.name }),
-                    beforeSend: function (request) {
-                        request.setRequestHeader('X-Upload-Content-Type', file.type)
-                        request.setRequestHeader('X-Upload-Content-Length', file.size)
-                    },
-                    success: function (response) {
-                        $.ajax({
-                            url: '{{ path('media_upload', { id: '__id__' }) }}'.replace(/__id__/, response.id),
-                            type: 'PUT',
-                            contentType: file.type,
-                            data: file,
-                            processData: false,
-                            success: function (response) {
-                                console.log(response)
-                            }
-                        })
-                    }
-                })
             }
 
-            return false
+            var $modal = $('#{{ id }}-upload')
+
+            {% set params = { multiple: multiple, full_name: full_name, image_params: image_params } | json_encode %}
+
+            // Delete media
+            $('#{{ id }} .media-delete').on('click', $delete)
+
+            // Create media
+            $('.media-upload', $modal).click(function () {
+                var $file = $('#{{ id }}-upload .media-file')
+                var files = $file.prop('files')
+
+                if (files.length) {
+                    var file = files[0]
+
+                    $file.val('')
+
+                    $modal.modal('hide')
+
+                    $.ajax({
+                        url: '{{ path('media_create') }}',
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ type: '{{ type_name }}', name: file.name }),
+                        headers: {
+                            'X-Upload-Content-Type': file.type,
+                            'X-Upload-Content-Length': file.size
+                        },
+                        success: function (response) {
+                            $.ajax({
+                                url: '{{ path('media_upload', { id: '__id__', params: params }) | raw }}'.replace(/__id__/, response.id),
+                                type: 'PUT',
+                                contentType: file.type,
+                                data: file,
+                                processData: false,
+                                headers: {
+                                    'Accept': 'text/html'
+                                },
+                                success: function (response) {
+                                    $('#{{ id }}-new').before(response)
+
+                                    // Delete media
+                                    $('#{{ id }} .media-delete').last().on('click', $delete)
+                                }
+                            })
+                        }
+                    })
+                }
+
+                return false
+            })
         })
     </script>
 {% endblock %}

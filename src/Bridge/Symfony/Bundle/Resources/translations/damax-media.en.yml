@@ -12,4 +12,4 @@ media:
         add: Add media
 
 file:
-    max_size: "Max size: %size%"
+    max_size: "Max file size: %size%"

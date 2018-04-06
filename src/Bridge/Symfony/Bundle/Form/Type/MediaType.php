@@ -55,6 +55,7 @@ class MediaType extends AbstractType
             ->setDefaults([
                 'required' => false,
                 'multiple' => false,
+                'compound' => false,
                 'image_params' => ['w' => 240, 'h' => 180],
             ])
         ;

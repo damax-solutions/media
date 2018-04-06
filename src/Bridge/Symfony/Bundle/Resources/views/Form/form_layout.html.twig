@@ -48,8 +48,8 @@
 
 {% block damax_media_item %}
 {% spaceless %}
-    <div class="col-md-3 col-sm-6">
-        <div class="card media-item">
+    <div class="col-md-3 col-sm-6 media-item">
+        <div class="card">
             {% if media.info.image %}
                 <img class="card-img-top" src="{{ media_image_url(media.id, image_params) }}" alt="">
             {% endif %}
