@@ -10,7 +10,7 @@
             {{ block('damax_media_item') }}
         {% endif %}
 
-        <div id="{{ id }}-new" class="col-md-3 col-sm-6" {% if not multiple and data %}style="display: none;"{% endif %}>
+        <div id="{{ id }}-new" class="col-md-3 col-sm-6" data-multiple="{{ multiple }}" {% if not multiple and data %}style="display: none;"{% endif %}>
             <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">{{ 'media.header.add' | trans({}, 'damax-media') }}</h5>

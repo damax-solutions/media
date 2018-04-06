@@ -8,6 +8,7 @@ button:
 media:
     message:
         confirm_removal: Are you sure?
+        upload_error: Upload error.
     header:
         add: Add media
 

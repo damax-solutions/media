@@ -8,6 +8,7 @@ button:
 media:
     message:
         confirm_removal: Вы уверены?
+        upload_error: Ошибка загрузки.
     header:
         add: Добавление медиа
 
