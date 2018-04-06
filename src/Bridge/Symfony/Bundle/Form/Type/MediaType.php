@@ -6,7 +6,6 @@ namespace Damax\Media\Bridge\Symfony\Bundle\Form\Type;
 
 use Damax\Media\Bridge\Symfony\Bundle\Form\DataTransformer\MediaCollectionToArrayTransformer;
 use Damax\Media\Bridge\Symfony\Bundle\Form\DataTransformer\MediaToIdTransformer;
-use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Model\MediaRepository;
 use Damax\Media\Type\Types;
 use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
@@ -56,10 +55,7 @@ class MediaType extends AbstractType
             ->setDefaults([
                 'required' => false,
                 'multiple' => false,
-                'image_params' => [
-                    'w' => 240,
-                    'h' => 180,
-                ],
+                'image_params' => ['w' => 240, 'h' => 180],
             ])
         ;
     }
