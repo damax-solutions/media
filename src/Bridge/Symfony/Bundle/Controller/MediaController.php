@@ -30,7 +30,7 @@ class MediaController
 {
     /**
      * @Method("POST")
-     * @Route("")
+     * @Route("", name="media_create")
      * @Command(CreateMedia::class)
      * @Serialize()
      *
@@ -51,7 +51,7 @@ class MediaController
 
     /**
      * @Method("PUT")
-     * @Route("/{id}/upload")
+     * @Route("/{id}/upload", name="media_upload")
      * @Serialize()
      *
      * @throws LengthRequiredHttpException
@@ -87,7 +87,7 @@ class MediaController
 
     /**
      * @Method("GET")
-     * @Route("/{id}")
+     * @Route("/{id}", name="media_get")
      * @Serialize()
      *
      * @throws NotFoundHttpException

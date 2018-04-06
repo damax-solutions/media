@@ -1,0 +1,61 @@
+{% block damax_media_javascript %}
+    <script type="text/javascript">
+
+        // Delete media
+        $('#{{ id }} .media-delete').each(function () {
+            var $elem = $(this)
+
+            $elem.click(function () {
+                if (confirm('{{ 'media.message.confirm_removal' | trans({}, 'damax-media') }}')) {
+                    $.ajax({
+                        url: $elem.attr('href'),
+                        type: 'DELETE',
+                        success: function () {
+                            $elem.parents('.media-item').fadeOut(function () {
+                                $(this).remove()
+                            })
+                        }
+                    })
+                }
+
+                return false
+            })
+        })
+
+        // Create media
+        $('#{{ id }}-upload .media-upload').click(function () {
+            var $file = $('#{{ id }}-upload .media-file')
+            var files = $file.prop('files')
+
+            if (files.length) {
+                var file = files[0]
+
+                $.ajax({
+                    url: '{{ path('media_create') }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ type: '{{ type_name }}', name: file.name }),
+                    beforeSend: function (request) {
+                        request.setRequestHeader('X-Upload-Content-Type', file.type)
+                        request.setRequestHeader('X-Upload-Content-Length', file.size)
+                    },
+                    success: function (response) {
+                        $.ajax({
+                            url: '{{ path('media_upload', { id: '__id__' }) }}'.replace(/__id__/, response.id),
+                            type: 'PUT',
+                            contentType: file.type,
+                            data: file,
+                            processData: false,
+                            success: function (response) {
+                                console.log(response)
+                            }
+                        })
+                    }
+                })
+            }
+
+            return false
+        })
+    </script>
+{% endblock %}

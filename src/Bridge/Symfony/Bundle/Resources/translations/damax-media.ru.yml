@@ -1,3 +1,15 @@
 button:
     delete: Удалить
     download: Скачать
+    upload: Загрузить
+    browse: Выбрать
+    cancel: Отменить
+
+media:
+    message:
+        confirm_removal: Вы уверены?
+    header:
+        add: Добавление медиа
+
+file:
+    max_size: "Максимальный размер: %size%"

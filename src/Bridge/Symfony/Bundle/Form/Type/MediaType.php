@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Damax\Media\Bridge\Symfony\Bundle\Form\Type;
 
+use Damax\Media\Bridge\Symfony\Bundle\Form\DataTransformer\MediaCollectionToArrayTransformer;
 use Damax\Media\Bridge\Symfony\Bundle\Form\DataTransformer\MediaToIdTransformer;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Model\MediaRepository;
 use Damax\Media\Type\Types;
+use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
+use Symfony\Bridge\Doctrine\Form\EventListener\MergeDoctrineCollectionListener;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\EventListener\MergeCollectionListener;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -33,14 +37,12 @@ class MediaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($options['multiple']) {
-            /*
             $builder
                 ->addEventSubscriber(new MergeDoctrineCollectionListener())
                 ->addEventSubscriber(new MergeCollectionListener(true, true))
                 ->addViewTransformer(new CollectionToArrayTransformer())
-                ->addViewTransformer(new MediaArrayToIdArrayTransformer($this->mediaRepository))
+                ->addViewTransformer(new MediaCollectionToArrayTransformer(new MediaToIdTransformer($this->repository)))
             ;
-            */
         } else {
             $builder->addViewTransformer(new MediaToIdTransformer($this->repository), true);
         }
@@ -65,14 +67,8 @@ class MediaType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['image_params'] = $options['image_params'];
-
-        /** @var Media $media */
-        $media = $view->vars['data'];
-
-        if ($media) {
-            $view->vars['media_id'] = (string) $media->id();
-            $view->vars['media_name'] = $media->name();
-            $view->vars['media_info'] = $media->info();
-        }
+        $view->vars['multiple'] = $options['multiple'];
+        $view->vars['type_name'] = $options['type'];
+        $view->vars['type'] = $this->types->definition($options['type']);
     }
 }

@@ -15,6 +15,7 @@ class FormPass implements CompilerPassInterface
 
         $container->setParameter('twig.form.resources', array_merge($resources, [
             'DamaxMediaBundle:Form:form_layout.html.twig',
+            'DamaxMediaBundle:Form:form_javascript.html.twig',
         ]));
     }
 }

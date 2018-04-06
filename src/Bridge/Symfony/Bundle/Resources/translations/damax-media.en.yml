@@ -1,3 +1,15 @@
 button:
     delete: Delete
     download: Download
+    upload: Upload
+    browse: Browse
+    cancel: Cancel
+
+media:
+    message:
+        confirm_removal: Are you sure?
+    header:
+        add: Add media
+
+file:
+    max_size: "Max size: %size%"
