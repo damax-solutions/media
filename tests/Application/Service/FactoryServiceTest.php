@@ -6,6 +6,7 @@ namespace Damax\Media\Tests\Application\Service;
 
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Dto\Assembler;
+use Damax\Media\Application\Dto\MediaCreationDto;
 use Damax\Media\Application\Dto\MediaDto;
 use Damax\Media\Application\Service\FactoryService;
 use Damax\Media\Domain\Model\Media;
@@ -50,11 +51,12 @@ class FactoryServiceTest extends TestCase
     public function it_creates_media()
     {
         $command = new CreateMedia();
+        $command->media = new MediaCreationDto();
 
         $this->mediaFactory
             ->expects($this->once())
             ->method('create')
-            ->with($this->identicalTo($command))
+            ->with($this->identicalTo($command->media))
             ->willReturn($media = $this->createMock(Media::class))
         ;
         $this->mediaRepository

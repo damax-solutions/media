@@ -7,6 +7,7 @@ namespace Damax\Media\Tests\Application\Service;
 use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Application\Dto\MediaDto;
+use Damax\Media\Application\Dto\MediaUploadDto;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Application\Service\MediaService;
@@ -100,6 +101,7 @@ class MediaServiceTest extends TestCase
     {
         $command = new UploadMedia();
         $command->mediaId = '183702c5-30de-11e8-97f3-005056806fb2';
+        $command->upload = new MediaUploadDto();
 
         $this->mediaRepository
             ->expects($this->once())
@@ -110,7 +112,7 @@ class MediaServiceTest extends TestCase
         $this->storage
             ->expects($this->once())
             ->method('write')
-            ->with($this->identicalTo($media), $this->identicalTo($command))
+            ->with($this->identicalTo($media), $this->identicalTo($command->upload))
             ->willThrowException(new InvalidMediaInput('Invalid media input.'))
         ;
 
@@ -127,6 +129,7 @@ class MediaServiceTest extends TestCase
     {
         $command = new UploadMedia();
         $command->mediaId = '183702c5-30de-11e8-97f3-005056806fb2';
+        $command->upload = new MediaUploadDto();
 
         $file = (new FileFactory())->createPdf();
 
@@ -139,7 +142,7 @@ class MediaServiceTest extends TestCase
         $this->storage
             ->expects($this->once())
             ->method('write')
-            ->with($this->identicalTo($media), $this->identicalTo($command))
+            ->with($this->identicalTo($media), $this->identicalTo($command->upload))
             ->willReturn($file)
         ;
         $this->mediaRepository

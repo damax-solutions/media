@@ -100,7 +100,7 @@ class DownloadServiceTest extends TestCase
 
         $this->assertEquals(1024, $response->headers->get('Content-Length'));
         $this->assertEquals('application/pdf', $response->headers->get('Content-Type'));
-        $this->assertEquals('attachment; filename="filename.pdf"', $response->headers->get('Content-Disposition'));
+        $this->assertEquals('attachment; filename=filename.pdf', $response->headers->get('Content-Disposition'));
 
         $response->sendContent();
 
