@@ -60,10 +60,10 @@ class MediaService
     {
         $media = $this->getMedia($command->mediaId);
 
-        $metadata = $this->metadata->supports($command) ? $this->metadata->extract($command) : null;
+        $metadata = $this->metadata->supports($command->upload) ? $this->metadata->extract($command->upload) : null;
 
         try {
-            $media->upload($this->storage->write($media, $command), $metadata);
+            $media->upload($this->storage->write($media, $command->upload), $metadata);
         } catch (Throwable $e) {
             throw new MediaUploadFailure($e->getMessage(), 0, $e);
         }

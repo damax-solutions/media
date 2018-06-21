@@ -4,30 +4,12 @@ declare(strict_types=1);
 
 namespace Damax\Media\Application\Command;
 
-use ArrayAccess;
-use Damax\Common\Application\AsArrayTrait;
+use Damax\Media\Application\Dto\MediaCreationDto;
 
-class CreateMedia implements ArrayAccess
+class CreateMedia
 {
-    use AsArrayTrait;
-
     /**
-     * @var string
+     * @var MediaCreationDto
      */
-    public $type;
-
-    /**
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var string
-     */
-    public $mimeType;
-
-    /**
-     * @var int
-     */
-    public $size;
+    public $media;
 }

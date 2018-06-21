@@ -24,6 +24,10 @@ class MediaTypeValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, MediaType::class);
         }
 
+        if (!$value) {
+            return;
+        }
+
         if ($this->types->hasDefinition($value)) {
             return;
         }

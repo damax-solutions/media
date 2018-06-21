@@ -4,25 +4,17 @@ declare(strict_types=1);
 
 namespace Damax\Media\Application\Command;
 
-use ArrayAccess;
-use Damax\Common\Application\AsArrayTrait;
+use Damax\Media\Application\Dto\MediaUploadDto;
 
-class UploadMedia extends MediaCommand implements ArrayAccess
+class UploadMedia
 {
-    use AsArrayTrait;
-
     /**
      * @var string
      */
-    public $mimeType;
+    public $mediaId;
 
     /**
-     * @var int
+     * @var MediaUploadDto
      */
-    public $size;
-
-    /**
-     * @var resource
-     */
-    public $stream;
+    public $upload;
 }

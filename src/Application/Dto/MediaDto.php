@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Application\Dto;
 
-use DateTimeInterface;
+use DateTime;
 
 class MediaDto
 {
@@ -39,17 +39,17 @@ class MediaDto
     public $size;
 
     /**
-     * @var DateTimeInterface
+     * @var DateTime
      */
     public $createdAt;
 
     /**
-     * @var DateTimeInterface
+     * @var DateTime
      */
     public $updatedAt;
 
     /**
-     * @var array
+     * @var string[]
      */
     public $metadata;
 }

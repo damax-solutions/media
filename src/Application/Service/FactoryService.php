@@ -25,7 +25,7 @@ class FactoryService
 
     public function createMedia(CreateMedia $command): MediaDto
     {
-        $media = $this->mediaFactory->create($command);
+        $media = $this->mediaFactory->create($command->media);
 
         $this->mediaRepository->save($media);
 

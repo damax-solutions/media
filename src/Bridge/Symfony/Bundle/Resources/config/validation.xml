@@ -3,8 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
 
-    <class name="Damax\Media\Application\Command\CreateMedia">
+    <class name="Damax\Media\Application\Dto\MediaCreationDto">
         <property name="type">
+            <constraint name="NotBlank" />
             <constraint name="Damax\Media\Bridge\Symfony\Validator\Constraints\MediaType" />
         </property>
         <property name="name">
@@ -14,31 +15,25 @@
             <constraint name="NotBlank" />
         </property>
         <property name="size">
+            <constraint name="NotBlank" />
             <constraint name="GreaterThan">
                 <option name="value">16</option>
             </constraint>
         </property>
     </class>
 
-    <class name="Damax\Media\Application\Command\MediaCommand">
-        <property name="mediaId">
-            <constraint name="NotBlank" />
-            <constraint name="Uuid" />
+    <class name="Damax\Media\Application\Dto\MediaUploadDto">
+        <property name="stream">
+            <constraint name="Type">
+                <option name="type">resource</option>
+            </constraint>
         </property>
-    </class>
-
-    <class name="Damax\Media\Application\Command\UploadMedia">
         <property name="mimeType">
             <constraint name="NotBlank" />
         </property>
         <property name="size">
             <constraint name="GreaterThan">
                 <option name="value">16</option>
-            </constraint>
-        </property>
-        <property name="stream">
-            <constraint name="Type">
-                <option name="type">resource</option>
             </constraint>
         </property>
     </class>

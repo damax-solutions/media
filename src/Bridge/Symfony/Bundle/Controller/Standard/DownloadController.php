@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Bridge\Symfony\Bundle\Controller;
+namespace Damax\Media\Bridge\Symfony\Bundle\Controller\Standard;
 
 use Damax\Media\Application\Exception\ImageProcessingFailure;
 use Damax\Media\Application\Exception\MediaNotFound;
