@@ -11,13 +11,13 @@ use Twig\TwigFunction;
 
 class MediaExtension extends \Twig_Extension
 {
-    private $urlBuilder;
     private $fileFormatter;
+    private $urlBuilder;
 
-    public function __construct(UrlBuilder $urlBuilder, FileFormatter $fileFormatter)
+    public function __construct(FileFormatter $fileFormatter, UrlBuilder $urlBuilder = null)
     {
-        $this->urlBuilder = $urlBuilder;
         $this->fileFormatter = $fileFormatter;
+        $this->urlBuilder = $urlBuilder;
     }
 
     public function getFunctions(): array

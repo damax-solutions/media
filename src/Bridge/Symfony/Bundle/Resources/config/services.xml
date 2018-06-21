@@ -21,6 +21,10 @@
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Validator\Constraints\" resource="../../../Validator/Constraints" />
 
+        <!-- Twig -->
+
+        <prototype namespace="Damax\Media\Bridge\Twig\" resource="../../../../Twig" />
+
         <!-- Application -->
 
         <prototype namespace="Damax\Media\Application\Service\" resource="../../../../../Application/Service" />
