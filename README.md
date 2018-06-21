@@ -1,26 +1,9 @@
-## Development
+# Damax Media
 
-Build image:
+Media management.
 
-```bash
-$ docker build -t damax-media .
-```
+## Documentation
 
-Install dependencies:
+Topics:
 
-```bash
-$ docker run --rm -v $(pwd):/app -w /app damax-media composer install
-```
-
-Fix php coding standards:
-
-```bash
-$ docker run --rm -v $(pwd):/app -w /app damax-media ./vendor/bin/php-cs-fixer fix
-```
-
-Running tests:
-
-```bash
-$ docker run --rm -v $(pwd):/app -w /app damax-media ./vendor/bin/simple-phpunit
-$ docker run --rm -v $(pwd):/app -w /app damax-media ./bin/phpunit-coverage
-```
+- [Development](doc/development.md)
