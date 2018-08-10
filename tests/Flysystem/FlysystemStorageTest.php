@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Damax\Media\Tests\Flysystem;
 
-use Damax\Common\Domain\Model\Metadata;
 use Damax\Media\Domain\Exception\StorageFailure;
-use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Storage\Keys\FixedKeys;
 use Damax\Media\Flysystem\FlysystemStorage;
-use Damax\Media\Tests\Domain\Model\FileFactory;
 use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
+use Damax\Media\Tests\Domain\Model\UploadedPdfMedia;
 use Damax\Media\Tests\Flysystem\Registry\TestRegistry;
 use Damax\Media\Type\Definition;
 use Damax\Media\Type\Types;
@@ -66,7 +64,7 @@ class FlysystemStorageTest extends TestCase
      */
     public function it_reads_media()
     {
-        $this->assertEquals('__binary__', $this->storage->read($this->getMedia()));
+        $this->assertEquals('__binary__', $this->storage->read(new UploadedPdfMedia()));
     }
 
     /**
@@ -76,7 +74,7 @@ class FlysystemStorageTest extends TestCase
     {
         $stream = tmpfile();
 
-        $this->storage->streamTo($this->getMedia(), $stream);
+        $this->storage->streamTo(new UploadedPdfMedia(), $stream);
 
         rewind($stream);
 
@@ -92,7 +90,7 @@ class FlysystemStorageTest extends TestCase
     {
         $filename = tempnam(sys_get_temp_dir(), uniqid());
 
-        $this->storage->dump($this->getMedia(), $filename);
+        $this->storage->dump(new UploadedPdfMedia(), $filename);
 
         $this->assertEquals('__binary__', file_get_contents($filename));
 
@@ -104,7 +102,7 @@ class FlysystemStorageTest extends TestCase
      */
     public function it_deletes_media()
     {
-        $this->storage->delete($this->getMedia());
+        $this->storage->delete(new UploadedPdfMedia());
 
         $this->assertFalse($this->filesystem->has('xyz/abc/filename.pdf'));
     }
@@ -193,15 +191,5 @@ class FlysystemStorageTest extends TestCase
 
         $this->assertTrue($this->filesystem->has('new_file.pdf'));
         $this->assertEquals('__binary__', $this->filesystem->read('new_file.pdf'));
-    }
-
-    private function getMedia(): Media
-    {
-        $file = (new FileFactory())->createPdf();
-
-        $media = new PendingPdfMedia();
-        $media->upload($file, Metadata::create());
-
-        return $media;
     }
 }

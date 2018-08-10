@@ -12,6 +12,20 @@ class FileInfoTest extends TestCase
     /**
      * @test
      */
+    public function it_creates_from_array()
+    {
+        $info = FileInfo::fromArray([
+            'mime_type' => 'application/pdf',
+            'file_size' => 1024,
+        ]);
+
+        $this->assertEquals('application/pdf', $info->mimeType());
+        $this->assertEquals(1024, $info->fileSize());
+    }
+
+    /**
+     * @test
+     */
     public function it_creates_file_info()
     {
         $info = new FileInfo('application/pdf', 1024);
