@@ -8,7 +8,7 @@ use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Bridge\Symfony\Bundle\DependencyInjection\DamaxMediaExtension;
 use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Image\UrlBuilder;
-use Damax\Media\Domain\Model\ConfigurableMediaFactory;
+use Damax\Media\Domain\Model\DefaultMediaFactory;
 use Damax\Media\Domain\Model\MediaFactory;
 use Damax\Media\Domain\Storage\Keys;
 use Damax\Media\Domain\Storage\RandomKeys;
@@ -52,7 +52,7 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
 
         $this->assertContainerBuilderHasService(Assembler::class);
         $this->assertContainerBuilderHasService(Types::class);
-        $this->assertContainerBuilderHasService(MediaFactory::class, ConfigurableMediaFactory::class);
+        $this->assertContainerBuilderHasService(MediaFactory::class, DefaultMediaFactory::class);
 
         // Assert types.
         $types = $this->container->getDefinition(Types::class)->getArgument(0);

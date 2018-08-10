@@ -6,6 +6,6 @@ namespace Damax\Media\Domain\Exception;
 
 use RuntimeException;
 
-class FileAlreadyExists extends RuntimeException
+final class FileAlreadyExists extends RuntimeException
 {
 }

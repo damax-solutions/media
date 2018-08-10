@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Damax\Media\Glide;
 
 use Damax\Media\Domain\Image\UrlBuilder;
+use Damax\Media\Domain\Model\MediaId;
 use League\Glide\Signatures\SignatureInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignedUrlBuilder implements UrlBuilder
+final class SignedUrlBuilder implements UrlBuilder
 {
     private $urlGenerator;
     private $signature;
@@ -21,9 +22,9 @@ class SignedUrlBuilder implements UrlBuilder
         $this->routeName = $routeName;
     }
 
-    public function build(string $mediaId, array $params): string
+    public function build(MediaId $mediaId, array $params): string
     {
-        $id = ['id' => $mediaId];
+        $id = ['id' => (string) $mediaId];
 
         $url = $this->urlGenerator->generate($this->routeName, $id);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Tests\Glide;
 
+use Damax\Media\Domain\Model\MediaId;
 use Damax\Media\Glide\SignedUrlBuilder;
 use League\Glide\Signatures\SignatureInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -46,8 +47,12 @@ class SignedUrlBuilderTest extends TestCase
                 ['media_image', ['id' => '183702c5-30de-11e8-97f3-005056806fb2']],
                 ['media_image', ['id' => '183702c5-30de-11e8-97f3-005056806fb2', 'signed' => 'params']]
             )
-            ->willReturnOnConsecutiveCalls('media-url', 'signed-media-url')
+            ->willReturnOnConsecutiveCalls(
+                'media-url',
+                'signed-media-url'
+            )
         ;
+
         $this->signature
             ->expects($this->once())
             ->method('addSignature')
@@ -55,6 +60,8 @@ class SignedUrlBuilderTest extends TestCase
             ->willReturn(['signed' => 'params'])
         ;
 
-        $this->assertEquals('signed-media-url', $this->urlBuilder->build('183702c5-30de-11e8-97f3-005056806fb2', ['w' => 200, 'h' => 200]));
+        $mediaId = MediaId::fromString('183702c5-30de-11e8-97f3-005056806fb2');
+
+        $this->assertEquals('signed-media-url', $this->urlBuilder->build($mediaId, ['w' => 200, 'h' => 200]));
     }
 }

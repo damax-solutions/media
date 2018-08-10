@@ -6,18 +6,8 @@ namespace Damax\Media\Domain\Exception;
 
 use RuntimeException;
 
-class InvalidMediaInput extends RuntimeException
+final class InvalidMediaInput extends RuntimeException
 {
-    public static function unregisteredType(string $type): self
-    {
-        return new self(sprintf('Media type "%s" is not registered.', $type));
-    }
-
-    public static function unsupportedStorage(string $storage): self
-    {
-        return new self(sprintf('Storage "%s" is not supported.', $storage));
-    }
-
     public static function unsupportedMimeType(string $mimeType): self
     {
         return new self(sprintf('Media with mime type "%s" is not supported.', $mimeType));

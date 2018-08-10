@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Model;
 
-interface MediaFactory
+final class UserId
 {
-    public function create($data): Media;
+    use AggregateIdTrait;
 }

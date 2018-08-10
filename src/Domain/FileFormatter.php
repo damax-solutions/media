@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain;
 
-class FileFormatter
+final class FileFormatter
 {
     private const UNITS = ['B', 'KB', 'MB', 'GB'];
     private const PRECISION = [0, 0, 1, 2];

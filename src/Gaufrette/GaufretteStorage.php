@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Damax\Media\Gaufrette;
 
-use Damax\Media\Domain\Exception\InvalidMediaInput;
+use Damax\Media\Domain\Exception\StorageFailure;
 use Damax\Media\Domain\Model\File;
 use Damax\Media\Domain\Storage\AbstractStorage;
-use Damax\Media\Domain\Storage\Keys;
-use Damax\Media\Domain\Storage\StorageFailure;
+use Damax\Media\Domain\Storage\Keys\Keys;
 use Damax\Media\Type\Types;
 use Gaufrette\Exception as GaufretteException;
 use Gaufrette\FilesystemMap;
 use RuntimeException;
 
-class GaufretteStorage extends AbstractStorage
+final class GaufretteStorage extends AbstractStorage
 {
     private $filesystems;
 
-    public function __construct(FilesystemMap $filesystems, Types $types, Keys $keys)
+    public function __construct(Types $types, Keys $keys, FilesystemMap $filesystems)
     {
         parent::__construct($types, $keys);
 
@@ -39,7 +38,7 @@ class GaufretteStorage extends AbstractStorage
         return fopen('gaufrette://' . $file->storage() . '/' . $file->key(), 'rb');
     }
 
-    protected function removeFile(File $file): void
+    protected function deleteFile(File $file): void
     {
         $this->filesystems
             ->get($file->storage())
@@ -50,7 +49,7 @@ class GaufretteStorage extends AbstractStorage
     protected function writeFile(string $key, string $storage, $stream): void
     {
         if (!$this->filesystems->has($storage)) {
-            throw InvalidMediaInput::unsupportedStorage($storage);
+            throw StorageFailure::unsupported($storage);
         }
 
         try {

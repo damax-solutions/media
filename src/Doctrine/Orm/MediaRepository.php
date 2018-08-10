@@ -4,23 +4,16 @@ declare(strict_types=1);
 
 namespace Damax\Media\Doctrine\Orm;
 
+use Damax\Common\Doctrine\Orm\OrmRepositoryTrait;
 use Damax\Media\Domain\Model\Media;
+use Damax\Media\Domain\Model\MediaId;
 use Damax\Media\Domain\Model\MediaRepository as MediaRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
-class MediaRepository implements MediaRepositoryInterface
+final class MediaRepository implements MediaRepositoryInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var string
-     */
-    private $className;
+    use OrmRepositoryTrait;
 
     public function __construct(EntityManagerInterface $em, string $mediaClassName)
     {
@@ -28,20 +21,26 @@ class MediaRepository implements MediaRepositoryInterface
         $this->className = $mediaClassName;
     }
 
-    public function nextId(): UuidInterface
+    public function nextId(): MediaId
     {
-        return Uuid::uuid4();
+        return MediaId::fromString((string) Uuid::uuid4());
     }
 
-    public function byId(UuidInterface $id): ?Media
+    public function byId(MediaId $id): ?Media
     {
         /** @var Media $media */
-        $media = $this->em->find($this->className, $id);
+        $media = $this->em->find($this->className, (string) $id);
 
         return $media;
     }
 
-    public function save(Media $media): void
+    public function add(Media $media): void
+    {
+        $this->em->persist($media);
+        $this->em->flush($media);
+    }
+
+    public function update(Media $media): void
     {
         $this->em->persist($media);
         $this->em->flush($media);

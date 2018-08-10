@@ -6,7 +6,7 @@ namespace Damax\Media\Domain\Model;
 
 use Assert\Assert;
 
-class ConfigurableMediaFactory implements MediaFactory
+final class DefaultMediaFactory implements MediaFactory
 {
     private $repository;
 
@@ -15,17 +15,19 @@ class ConfigurableMediaFactory implements MediaFactory
         $this->repository = $repository;
     }
 
-    public function create($data, User $creator = null): Media
+    public function create($data): Media
     {
         Assert::that($data)
             ->keyIsset('type')
             ->keyIsset('name')
             ->keyIsset('mime_type')
-            ->keyIsset('size')
+            ->keyIsset('file_size')
         ;
 
-        $info = new MediaInfo($data['mime_type'], $data['size']);
+        $info = FileInfo::fromArray($data);
 
-        return new Media($this->repository->nextId(), $data['type'], $data['name'], $info, $creator);
+        $userId = isset($data['user_id']) ? UserId::fromString($data['user_id']) : null;
+
+        return new Media($this->repository->nextId(), $data['type'], $data['name'], $info, $userId);
     }
 }

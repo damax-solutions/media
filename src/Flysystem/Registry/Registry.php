@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Flysystem;
+namespace Damax\Media\Flysystem\Registry;
 
 use League\Flysystem\FilesystemInterface;
 

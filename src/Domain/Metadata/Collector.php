@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Metadata;
 
-use Damax\Media\Domain\Model\Metadata;
+use Damax\Common\Domain\Model\Metadata;
 
-class Collector implements Reader
+final class Collector implements Reader
 {
     /**
      * @var Reader[]
@@ -46,6 +46,6 @@ class Collector implements Reader
             return $reader->supports($context);
         };
 
-        return array_reduce(array_filter($this->items, $filter), $reduce, Metadata::blank());
+        return array_reduce(array_filter($this->items, $filter), $reduce, Metadata::create());
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Damax\Media\Glide;
 
 use Damax\Media\Domain\Exception\InvalidMediaInput;
-use Damax\Media\Domain\Exception\MediaNotReadable;
 use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Flysystem\Registry;
@@ -16,7 +15,7 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
-class GlideManipulator extends Manipulator
+final class GlideManipulator extends Manipulator
 {
     private $registry;
     private $signature;
@@ -39,12 +38,11 @@ class GlideManipulator extends Manipulator
 
         $this->signature->validateRequest($request->getPathInfo(), $params);
 
-        if (null === $file = $media->file()) {
-            throw MediaNotReadable::missingFile();
-        }
+        $file = $media->file();
+        $info = $file->info();
 
-        if (!$file->image()) {
-            throw InvalidMediaInput::unsupportedMimeType($file->mimeType());
+        if (!$info->image()) {
+            throw InvalidMediaInput::unsupportedMimeType($info->mimeType());
         }
 
         $config = array_merge($this->serverConfig, [

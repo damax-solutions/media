@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Model;
 
+use Damax\Common\Domain\Model\Metadata;
+use Damax\Media\Domain\Exception\InvalidFile;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Ramsey\Uuid\UuidInterface;
 
 class Media
 {
@@ -17,35 +18,30 @@ class Media
     private $status = self::STATUS_PENDING;
     private $type;
     private $name;
-    private $info;
+    private $mimeType;
+    private $fileSize;
+    private $fileKey;
+    private $storage;
+    private $metadata = [];
     private $createdAt;
     private $updatedAt;
-    private $createdBy;
-    private $updatedBy;
+    private $createdById;
+    private $updatedById;
 
-    /**
-     * @var File
-     */
-    private $file;
-
-    /**
-     * @var Metadata
-     */
-    private $metadata;
-
-    public function __construct(UuidInterface $id, string $type, string $name, MediaInfo $info, User $user = null)
+    public function __construct(MediaId $id, string $type, string $name, FileInfo $info, UserId $userId = null)
     {
-        $this->id = $id;
+        $this->id = (string) $id;
         $this->type = $type;
         $this->name = $name;
-        $this->info = $info;
+        $this->mimeType = $info->mimeType();
+        $this->fileSize = $info->fileSize();
         $this->createdAt = $this->updatedAt = new DateTimeImmutable();
-        $this->createdBy = $this->updatedBy = $user;
+        $this->createdById = $this->updatedById = $userId ? (string) $userId : null;
     }
 
-    public function id(): UuidInterface
+    public function id(): MediaId
     {
-        return $this->id;
+        return MediaId::fromString($this->id);
     }
 
     public function status(): string
@@ -63,9 +59,36 @@ class Media
         return $this->name;
     }
 
-    public function info(): MediaInfo
+    public function info(): FileInfo
     {
-        return $this->info;
+        return new FileInfo($this->mimeType, $this->fileSize);
+    }
+
+    public function matchesInfo(FileInfo $info): bool
+    {
+        return $this->info()->sameAs($info);
+    }
+
+    public function uploaded(): bool
+    {
+        return $this->fileKey && $this->storage;
+    }
+
+    /**
+     * @throws InvalidFile
+     */
+    public function file(): File
+    {
+        if (!$this->uploaded()) {
+            throw InvalidFile::notUploaded();
+        }
+
+        return new File($this->fileKey, $this->storage, $this->info());
+    }
+
+    public function metadata(): Metadata
+    {
+        return Metadata::fromArray($this->metadata);
     }
 
     public function createdAt(): DateTimeInterface
@@ -78,38 +101,30 @@ class Media
         return $this->updatedAt;
     }
 
-    public function createdBy(): ?User
+    public function createdById(): ?UserId
     {
-        return $this->createdBy;
+        return $this->createdById ? UserId::fromString($this->createdById) : null;
     }
 
-    public function updatedBy(): ?User
+    public function updatedById(): ?UserId
     {
-        return $this->updatedBy;
+        return $this->updatedById ? UserId::fromString($this->updatedById) : null;
     }
 
-    public function file(): ?File
+    /**
+     * @throws InvalidFile
+     */
+    public function upload(File $file, Metadata $metadata, UserId $uploaderId = null)
     {
-        return $this->file && $this->file->defined() ? $this->file : null;
-    }
-
-    public function metadata(): Metadata
-    {
-        if (is_array($this->metadata)) {
-            $this->metadata = Metadata::fromArray($this->metadata);
-        } elseif (is_null($this->metadata)) {
-            $this->metadata = Metadata::blank();
+        if (!$this->matchesInfo($file->info())) {
+            throw InvalidFile::unmatchedInfo();
         }
 
-        return $this->metadata;
-    }
-
-    public function upload(File $file, Metadata $metadata = null, User $uploader = null)
-    {
         $this->status = self::STATUS_UPLOADED;
-        $this->file = $file;
-        $this->metadata = $metadata ?? Metadata::blank();
+        $this->fileKey = $file->key();
+        $this->storage = $file->storage();
+        $this->metadata = $metadata->all();
         $this->updatedAt = new DateTimeImmutable();
-        $this->updatedBy = $uploader;
+        $this->updatedById = $uploaderId ? (string) $uploaderId : $this->updatedById;
     }
 }

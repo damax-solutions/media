@@ -11,46 +11,49 @@ use PHPUnit\Framework\TestCase;
 class TypesTest extends TestCase
 {
     /**
-     * @test
+     * @var Definition
      */
-    public function it_adds_definitions_on_types_creation()
+    private $def1;
+
+    /**
+     * @var Definition
+     */
+    private $def2;
+
+    /**
+     * @var Types
+     */
+    private $types;
+
+    protected function setUp()
     {
-        $def1 = new Definition('s3', 1, []);
-        $def2 = new Definition('s3', 2, []);
-
-        $types = new Types(['foo' => $def1, 'bar' => $def2]);
-
-        $this->assertAttributeSame(['foo' => $def1, 'bar' => $def2], 'definitions', $types);
-
-        return $types;
+        $this->def1 = new Definition('s3', 1, []);
+        $this->def2 = new Definition('s3', 2, []);
+        $this->types = new Types(['foo' => $this->def1, 'bar' => $this->def2]);
     }
 
     /**
      * @test
-     *
-     * @depends it_adds_definitions_on_types_creation
      */
-    public function it_checks_definition_existence(Types $types)
+    public function it_creates_types()
     {
-        $this->assertTrue($types->hasDefinition('foo'));
-        $this->assertTrue($types->hasDefinition('bar'));
-        $this->assertFalse($types->hasDefinition('baz'));
+        $this->assertSame(['foo', 'bar'], $this->types->names());
+
+        $this->assertSame($this->def1, $this->types->definition('foo'));
+        $this->assertSame($this->def2, $this->types->definition('bar'));
+
+        $this->assertTrue($this->types->hasDefinition('foo'));
+        $this->assertTrue($this->types->hasDefinition('bar'));
+        $this->assertFalse($this->types->hasDefinition('baz'));
     }
 
     /**
      * @test
-     *
-     * @depends it_adds_definitions_on_types_creation
      */
-    public function it_retrieves_definition(Types $types)
+    public function it_resets_types()
     {
-        $def1 = $types->definition('foo');
-        $def2 = $types->definition('bar');
+        $this->types->reset();
 
-        $this->assertEquals('s3', $def1->storage());
-        $this->assertSame(1, $def1->maxFileSize());
-
-        $this->assertEquals('s3', $def2->storage());
-        $this->assertSame(2, $def2->maxFileSize());
+        $this->assertEquals([], $this->types->names());
     }
 }

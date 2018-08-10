@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Damax\Media\Tests\Gaufrette;
 
-use Damax\Media\Domain\Exception\InvalidMediaInput;
+use Damax\Common\Domain\Model\Metadata;
+use Damax\Media\Domain\Exception\FileAlreadyExists;
+use Damax\Media\Domain\Exception\InvalidFile;
+use Damax\Media\Domain\Exception\StorageFailure;
 use Damax\Media\Domain\Model\Media;
-use Damax\Media\Domain\Storage\Keys;
-use Damax\Media\Domain\Storage\StorageFailure;
+use Damax\Media\Domain\Storage\Keys\FixedKeys;
 use Damax\Media\Gaufrette\GaufretteStorage;
 use Damax\Media\Tests\Domain\Model\FileFactory;
 use Damax\Media\Tests\Domain\Model\PendingPdfMedia;
@@ -19,9 +21,12 @@ use Gaufrette\Filesystem;
 use Gaufrette\FilesystemInterface;
 use Gaufrette\FilesystemMap;
 use Gaufrette\StreamWrapper;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Damax\Media\Domain\Storage\AbstractStorage
+ * @covers \Damax\Media\Gaufrette\GaufretteStorage
+ */
 class GaufretteStorageTest extends TestCase
 {
     /**
@@ -33,11 +38,6 @@ class GaufretteStorageTest extends TestCase
      * @var FilesystemInterface
      */
     private $filesystem;
-
-    /**
-     * @var Keys|MockObject
-     */
-    private $keys;
 
     /**
      * @var GaufretteStorage
@@ -55,12 +55,9 @@ class GaufretteStorageTest extends TestCase
         StreamWrapper::setFilesystemMap($this->filesystems);
         StreamWrapper::register();
 
-        $types = new Types([
-            'document' => new Definition('s3', 2048, ['application/pdf']),
-        ]);
+        $document = new Definition('s3', 2048, ['application/pdf']);
 
-        $this->keys = $this->createMock(Keys::class);
-        $this->storage = new GaufretteStorage($this->filesystems, $types, $this->keys);
+        $this->storage = new GaufretteStorage(new Types(['document' => $document]), new FixedKeys(['new_file.pdf']), $this->filesystems);
     }
 
     /**
@@ -90,16 +87,40 @@ class GaufretteStorageTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_exception_when_writing_media_to_unsupported_storage()
+    public function it_dumps_media()
     {
-        $this->expectException(InvalidMediaInput::class);
+        $filename = tempnam(sys_get_temp_dir(), uniqid());
+
+        $this->storage->dump($this->getMedia(), $filename);
+
+        $this->assertEquals('__binary__', file_get_contents($filename));
+
+        unlink($filename);
+    }
+
+    /**
+     * @test
+     */
+    public function it_deletes_media()
+    {
+        $this->storage->delete($this->getMedia());
+
+        $this->assertFalse($this->filesystem->has('xyz/abc/filename.pdf'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_fails_to_write_to_unsupported_storage()
+    {
+        $this->expectException(StorageFailure::class);
         $this->expectExceptionMessage('Storage "s3" is not supported.');
 
         $this->filesystems->remove('s3');
 
         $this->storage->write(new PendingPdfMedia(), [
             'mime_type' => 'application/pdf',
-            'size' => 1024,
+            'file_size' => 1024,
             'stream' => 'stream',
         ]);
     }
@@ -107,7 +128,7 @@ class GaufretteStorageTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_exception_when_writing_media_with_filesystem_exception()
+    public function it_fails_to_write_on_filesystem_error()
     {
         $this->filesystems->set('s3', $filesystem = $this->createMock(Filesystem::class));
 
@@ -116,21 +137,44 @@ class GaufretteStorageTest extends TestCase
             ->method('write')
             ->willThrowException(new UnsupportedAdapterMethodException())
         ;
-        $this->keys
-            ->method('nextKey')
-            ->willReturn('new_file.pdf')
-        ;
 
         $this->expectException(StorageFailure::class);
-        $this->expectExceptionMessage('Unable to write key "document/new_file.pdf".');
+        $this->expectExceptionMessage('Unable to write key "new_file.pdf".');
 
         $this->storage->write(new PendingPdfMedia(), [
             'mime_type' => 'application/pdf',
-            'size' => 1024,
-            'stream' => $stream = tmpfile(),
+            'file_size' => 1024,
+            'stream' => tmpfile(),
         ]);
+    }
 
-        fclose($stream);
+    /**
+     * @test
+     */
+    public function it_fails_to_write_on_file_mismatch()
+    {
+        $this->expectException(InvalidFile::class);
+        $this->expectExceptionMessage('Unmatched file info.');
+
+        $this->storage->write(new PendingPdfMedia(), [
+            'mime_type' => 'application/pdf',
+            'file_size' => 2048,
+            'stream' => tmpfile(),
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_fails_to_write_when_file_exists()
+    {
+        $this->expectException(FileAlreadyExists::class);
+
+        $this->storage->write($this->getMedia(), [
+            'mime_type' => 'application/pdf',
+            'file_size' => 1024,
+            'stream' => tmpfile(),
+        ]);
     }
 
     /**
@@ -138,40 +182,20 @@ class GaufretteStorageTest extends TestCase
      */
     public function it_writes_media()
     {
-        $this->keys
-            ->method('nextKey')
-            ->willReturn('new_file.pdf')
-        ;
-
         $stream = tmpfile();
         fwrite($stream, '__binary__');
         rewind($stream);
 
         $this->storage->write(new PendingPdfMedia(), [
             'mime_type' => 'application/pdf',
-            'size' => 1024,
+            'file_size' => 1024,
             'stream' => $stream,
         ]);
 
         fclose($stream);
 
-        $this->assertTrue($this->filesystem->has('document/new_file.pdf'));
-        $this->assertEquals('__binary__', $this->filesystem->get('document/new_file.pdf')->getContent());
-    }
-
-    /**
-     * @test
-     */
-    public function it_removes_media()
-    {
-        $file = (new FileFactory())->createPdf();
-
-        $media = new PendingPdfMedia();
-        $media->upload($file);
-
-        $this->storage->remove($media);
-
-        $this->assertFalse($this->filesystem->has('xyz/abc/filename.pdf'));
+        $this->assertTrue($this->filesystem->has('new_file.pdf'));
+        $this->assertEquals('__binary__', $this->filesystem->get('new_file.pdf')->getContent());
     }
 
     private function getMedia(): Media
@@ -179,7 +203,7 @@ class GaufretteStorageTest extends TestCase
         $file = (new FileFactory())->createPdf();
 
         $media = new PendingPdfMedia();
-        $media->upload($file);
+        $media->upload($file, Metadata::create());
 
         return $media;
     }

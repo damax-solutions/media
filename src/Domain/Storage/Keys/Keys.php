@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Domain\Storage;
+namespace Damax\Media\Domain\Storage\Keys;
 
 interface Keys
 {

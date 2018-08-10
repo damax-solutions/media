@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Model;
 
-use Ramsey\Uuid\UuidInterface;
-
 interface MediaRepository
 {
-    public function nextId(): UuidInterface;
+    public function nextId(): MediaId;
 
-    public function byId(UuidInterface $id): ?Media;
+    public function byId(MediaId $id): ?Media;
 
-    public function save(Media $media): void;
+    public function add(Media $media): void;
+
+    public function update(Media $media): void;
 
     public function remove(Media $media): void;
 }

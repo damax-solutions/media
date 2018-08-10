@@ -18,9 +18,11 @@ class ManipulatorTest extends TestCase
             'w' => 200,
             'h' => 200,
         ]));
+
         $this->assertFalse(Manipulator::validParams([
             'w' => 200,
             'h' => 200,
+
             'foo' => 'bar',
             'baz' => 'qux',
         ]));

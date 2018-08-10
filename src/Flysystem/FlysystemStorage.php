@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Damax\Media\Flysystem;
 
-use Damax\Media\Domain\Exception\InvalidMediaInput;
+use Damax\Media\Domain\Exception\StorageFailure;
 use Damax\Media\Domain\Model\File;
 use Damax\Media\Domain\Storage\AbstractStorage;
-use Damax\Media\Domain\Storage\Keys;
-use Damax\Media\Domain\Storage\StorageFailure;
+use Damax\Media\Domain\Storage\Keys\Keys;
+use Damax\Media\Flysystem\Registry\Registry;
 use Damax\Media\Type\Types;
 use Throwable;
 
-class FlysystemStorage extends AbstractStorage
+final class FlysystemStorage extends AbstractStorage
 {
     private $registry;
 
-    public function __construct(Registry $registry, Types $types, Keys $keys)
+    public function __construct(Types $types, Keys $keys, Registry $registry)
     {
         parent::__construct($types, $keys);
 
@@ -39,7 +39,7 @@ class FlysystemStorage extends AbstractStorage
         ;
     }
 
-    protected function removeFile(File $file): void
+    protected function deleteFile(File $file): void
     {
         $this->registry
             ->get($file->storage())
@@ -50,14 +50,11 @@ class FlysystemStorage extends AbstractStorage
     protected function writeFile(string $key, string $storage, $stream): void
     {
         if (!$this->registry->has($storage)) {
-            throw InvalidMediaInput::unsupportedStorage($storage);
+            throw StorageFailure::unsupported($storage);
         }
 
         try {
-            $result = $this->registry
-                ->get($storage)
-                ->writeStream($key, $stream)
-            ;
+            $result = $this->registry->get($storage)->writeStream($key, $stream);
         } catch (Throwable $e) {
             throw StorageFailure::invalidWrite($key, $e);
         }

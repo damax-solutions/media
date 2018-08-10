@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Tests\Domain;
+namespace Damax\Media\Tests\Domain\Storage\Guesser;
 
-use Damax\Media\Domain\Storage\SymfonyExtensionGuesser;
+use Damax\Media\Domain\Storage\Guesser\SymfonyGuesser;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesserInterface;
 
-class SymfonyExtensionGuesserTest extends TestCase
+class SymfonyGuesserTest extends TestCase
 {
     /**
      * @var ExtensionGuesserInterface|MockObject
      */
-    private $delegate;
+    private $mimeTypes;
 
     /**
-     * @var SymfonyExtensionGuesser
+     * @var SymfonyGuesser
      */
     private $guesser;
 
     protected function setUp()
     {
-        $this->delegate = $this->createMock(ExtensionGuesserInterface::class);
-        $this->guesser = new SymfonyExtensionGuesser($this->delegate);
+        $this->mimeTypes = $this->createMock(ExtensionGuesserInterface::class);
+        $this->guesser = new SymfonyGuesser($this->mimeTypes);
     }
 
     /**
@@ -32,12 +32,12 @@ class SymfonyExtensionGuesserTest extends TestCase
      */
     public function it_guesses_extension()
     {
-        $this->delegate
+        $this->mimeTypes
             ->method('guess')
             ->with('application/pdf')
             ->willReturn('pdf')
         ;
 
-        $this->assertEquals('pdf', $this->guesser->guess('application/pdf'));
+        $this->assertEquals('pdf', $this->guesser->guessExtension('application/pdf'));
     }
 }

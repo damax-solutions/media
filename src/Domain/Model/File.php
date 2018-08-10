@@ -4,27 +4,32 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Model;
 
-final class File extends MediaInfo
+final class File
 {
     private $key;
     private $storage;
+    private $info;
 
-    public function __construct(string $mimeType, int $size, string $key, string $storage)
+    public function __construct(string $key, string $storage, FileInfo $info)
     {
-        parent::__construct($mimeType, $size);
-
         $this->key = $key;
         $this->storage = $storage;
-    }
-
-    public function defined(): bool
-    {
-        return (bool) $this->key;
+        $this->info = $info;
     }
 
     public function key(): string
     {
         return $this->key;
+    }
+
+    public function storage(): string
+    {
+        return $this->storage;
+    }
+
+    public function info(): FileInfo
+    {
+        return $this->info;
     }
 
     public function basename(): ?string
@@ -35,10 +40,5 @@ final class File extends MediaInfo
     public function extension(): ?string
     {
         return pathinfo($this->key, PATHINFO_EXTENSION);
-    }
-
-    public function storage(): string
-    {
-        return $this->storage;
     }
 }

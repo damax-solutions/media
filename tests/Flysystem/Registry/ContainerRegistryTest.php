@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Tests\Flysystem;
+namespace Damax\Media\Tests\Flysystem\Registry;
 
-use Damax\Media\Flysystem\ContainerRegistry;
+use Damax\Media\Flysystem\Registry\ContainerRegistry;
 use League\Flysystem\FilesystemInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

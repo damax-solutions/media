@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Domain\Metadata;
 
-use Damax\Media\Domain\Model\Metadata;
+use Damax\Common\Domain\Model\Metadata;
 
 interface Reader
 {

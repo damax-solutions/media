@@ -15,12 +15,12 @@ $ docker run --rm -v $(pwd):/app -w /app damax-media composer install
 Fix php coding standards:
 
 ```bash
-$ docker run --rm -v $(pwd):/app -w /app damax-media ./vendor/bin/php-cs-fixer fix
+$ docker run --rm -v $(pwd):/app -w /app damax-media composer cs
 ```
 
 Running tests:
 
 ```bash
-$ docker run --rm -v $(pwd):/app -w /app damax-media ./vendor/bin/simple-phpunit
-$ docker run --rm -v $(pwd):/app -w /app damax-media ./bin/phpunit-coverage
+$ docker run --rm -v $(pwd):/app -w /app damax-media composer test
+$ docker run --rm -v $(pwd):/app -w /app damax-media composer test-cc
 ```
