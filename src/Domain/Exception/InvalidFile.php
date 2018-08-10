@@ -17,4 +17,9 @@ final class InvalidFile extends RuntimeException
     {
         return new self('Unmatched file info.');
     }
+
+    public static function unsupportedMimeType(string $mimeType): self
+    {
+        return new self(sprintf('File with mime type "%s" is not supported.', $mimeType));
+    }
 }

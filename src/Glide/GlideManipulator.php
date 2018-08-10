@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Damax\Media\Glide;
 
-use Damax\Media\Domain\Exception\InvalidMediaInput;
+use Damax\Media\Domain\Exception\InvalidFile;
 use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Model\Media;
-use Damax\Media\Flysystem\Registry;
+use Damax\Media\Flysystem\Registry\Registry;
 use League\Glide\Responses\SymfonyResponseFactory;
 use League\Glide\ServerFactory;
 use League\Glide\Signatures\SignatureInterface;
@@ -42,7 +42,7 @@ final class GlideManipulator extends Manipulator
         $info = $file->info();
 
         if (!$info->image()) {
-            throw InvalidMediaInput::unsupportedMimeType($info->mimeType());
+            throw InvalidFile::unsupportedMimeType($info->mimeType());
         }
 
         $config = array_merge($this->serverConfig, [

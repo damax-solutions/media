@@ -24,6 +24,8 @@ use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 /**
  * @covers \Damax\Media\Domain\Storage\AbstractStorage
  * @covers \Damax\Media\Flysystem\FlysystemStorage
+ * @covers \Damax\Media\Domain\Exception\InvalidFile
+ * @covers \Damax\Media\Domain\Exception\StorageFailure
  */
 class FlysystemStorageTest extends TestCase
 {

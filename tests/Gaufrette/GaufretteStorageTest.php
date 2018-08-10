@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Damax\Media\Domain\Storage\AbstractStorage
  * @covers \Damax\Media\Gaufrette\GaufretteStorage
+ * @covers \Damax\Media\Domain\Exception\InvalidFile
+ * @covers \Damax\Media\Domain\Exception\StorageFailure
  */
 class GaufretteStorageTest extends TestCase
 {
