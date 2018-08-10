@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Damax\Media\Tests\Domain\Model;
 
+use Damax\Common\Domain\Model\Metadata;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Model\MediaId;
 
-final class PendingPdfMedia extends Media
+final class UploadedPdfMedia extends Media
 {
     public function __construct()
     {
@@ -16,5 +17,7 @@ final class PendingPdfMedia extends Media
         $file = (new FileFactory())->createPdf();
 
         parent::__construct($id, 'document', 'Test PDF document', $file->info());
+
+        $this->upload($file, Metadata::create());
     }
 }

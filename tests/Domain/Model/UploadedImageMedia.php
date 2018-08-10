@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Damax\Media\Tests\Domain\Model;
 
+use Damax\Common\Domain\Model\Metadata;
 use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Model\MediaId;
 
-final class PendingImageMedia extends Media
+final class UploadedImageMedia extends Media
 {
     public function __construct()
     {
@@ -16,5 +17,7 @@ final class PendingImageMedia extends Media
         $file = (new FileFactory())->createPng();
 
         parent::__construct($id, 'image', 'Test PNG image', $file->info());
+
+        $this->upload($file, Metadata::create());
     }
 }
