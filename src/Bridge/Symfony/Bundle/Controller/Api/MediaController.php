@@ -33,12 +33,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 final class MediaController
 {
     private $commandBus;
-    private $idGenerator;
+    private $urlGenerator;
 
-    public function __construct(MessageBus $commandBus, IdGenerator $idGenerator)
+    public function __construct(MessageBus $commandBus, UrlGeneratorInterface $urlGenerator)
     {
         $this->commandBus = $commandBus;
-        $this->idGenerator = $idGenerator;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -69,13 +69,13 @@ final class MediaController
      * @Serialize()
      * @Deserialize(MediaCreationDto::class, validate=true, param="media")
      */
-    public function createAction(UrlGeneratorInterface $urlGenerator, MediaCreationDto $media): Response
+    public function createAction(IdGenerator $idGenerator, MediaCreationDto $media): Response
     {
-        $mediaId = (string) $this->idGenerator->mediaId();
+        $mediaId = (string) $idGenerator->mediaId();
 
         $this->commandBus->handle(new CreateMedia($mediaId, $media));
 
-        $resource = $urlGenerator->generate('media_view', ['id' => $mediaId]);
+        $resource = $this->urlGenerator->generate('media_view', ['id' => $mediaId]);
 
         return Response::create('', Response::HTTP_ACCEPTED, ['location' => $resource]);
     }
@@ -122,7 +122,7 @@ final class MediaController
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
-    public function uploadAction(Request $request, string $id, ValidatorInterface $validator, UrlGeneratorInterface $urlGenerator)
+    public function uploadAction(Request $request, string $id, ValidatorInterface $validator)
     {
         if (!($length = $request->headers->get('Content-Length'))) {
             throw new LengthRequiredHttpException();
@@ -147,7 +147,7 @@ final class MediaController
             throw new BadRequestHttpException();
         }
 
-        $resource = $urlGenerator->generate('media_download', ['id' => $id]);
+        $resource = $this->urlGenerator->generate('media_view', ['id' => $id]);
 
         return Response::create('', Response::HTTP_ACCEPTED, ['location' => $resource]);
     }
