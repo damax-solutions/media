@@ -16,6 +16,9 @@
     <filter>
         <whitelist>
             <directory>src</directory>
+            <exclude>
+                <directory>src/Bridge/Symfony/Bundle/Controller</directory>
+            </exclude>
         </whitelist>
     </filter>
 

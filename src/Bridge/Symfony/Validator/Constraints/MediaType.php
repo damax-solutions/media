@@ -6,7 +6,7 @@ namespace Damax\Media\Bridge\Symfony\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class MediaType extends Constraint
+final class MediaType extends Constraint
 {
     /**
      * @var string

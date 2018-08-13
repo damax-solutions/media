@@ -6,51 +6,55 @@ namespace Damax\Media\Bridge\Symfony\Bundle\Controller\Standard;
 
 use Damax\Media\Application\Exception\ImageProcessingFailure;
 use Damax\Media\Application\Exception\MediaNotFound;
-use Damax\Media\Application\Exception\MediaNotUploaded;
-use Damax\Media\Application\Service\DownloadService;
-use Damax\Media\Application\Service\ImageService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Damax\Media\Application\Query\DownloadMedia;
+use Damax\Media\Application\Query\GetImage;
+use League\Tactician\CommandBus as QueryBus;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/media")
  */
-class DownloadController
+final class DownloadController
 {
+    private $queryBus;
+
+    public function __construct(QueryBus $queryBus)
+    {
+        $this->queryBus = $queryBus;
+    }
+
     /**
-     * @Method("GET")
-     * @Route("/{id}/download", name="media_download")
+     * @Route("/{id}/download", methods={"GET"}, name="media_download")
      *
      * @throws NotFoundHttpException
      */
-    public function downloadAction(string $id, DownloadService $service): Response
+    public function downloadAction(string $id): Response
     {
         try {
-            return $service->download($id);
-        } catch (MediaNotFound | MediaNotUploaded $e) {
+            return $this->queryBus->handle(new DownloadMedia($id));
+        } catch (MediaNotFound $e) {
             throw new NotFoundHttpException();
         }
     }
 
     /**
-     * @Method("GET")
-     * @Route("/{id}/image", name="media_image")
+     * @Route("/{id}/image", methods={"GET"}, name="media_image")
      *
      * @throws NotFoundHttpException
      * @throws BadRequestHttpException
      */
-    public function imageAction(Request $request, string $id, ImageService $service): Response
+    public function imageAction(Request $request, string $id): Response
     {
         try {
-            return $service->process($id, $request->query->all());
-        } catch (MediaNotFound | MediaNotUploaded $e) {
+            return $this->queryBus->handle(new GetImage($id, $request->query->all()));
+        } catch (MediaNotFound $e) {
             throw new NotFoundHttpException();
         } catch (ImageProcessingFailure $e) {
-            throw new BadRequestHttpException('Processing failure');
+            throw new BadRequestHttpException();
         }
     }
 }

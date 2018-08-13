@@ -30,7 +30,7 @@ class MediaTypeValidatorTest extends ConstraintValidatorTestCase
     /**
      * @test
      */
-    public function it_throws_exception_on_unsupported_constraint()
+    public function it_fails_to_validate_on_unsupported_constraint()
     {
         $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(sprintf('Expected argument of type "%s", "%s" given', MediaType::class, NotBlank::class));
@@ -41,7 +41,17 @@ class MediaTypeValidatorTest extends ConstraintValidatorTestCase
     /**
      * @test
      */
-    public function it_has_no_violations_on_registered_media_type()
+    public function it_has_no_violations_when_value_is_empty()
+    {
+        $this->validator->validate('', new MediaType());
+
+        $this->assertNoViolation();
+    }
+
+    /**
+     * @test
+     */
+    public function it_has_no_violations()
     {
         $this->types->addDefinition('document', new Definition('s3', 1024, ['application/pdf']));
 

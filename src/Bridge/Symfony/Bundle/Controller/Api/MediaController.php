@@ -7,36 +7,38 @@ namespace Damax\Media\Bridge\Symfony\Bundle\Controller\Api;
 use Damax\Common\Bridge\Symfony\Bundle\Annotation\Deserialize;
 use Damax\Common\Bridge\Symfony\Bundle\Annotation\Serialize;
 use Damax\Media\Application\Command\CreateMedia;
+use Damax\Media\Application\Command\DeleteMedia;
 use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\MediaCreationDto;
-use Damax\Media\Application\Dto\MediaDto;
 use Damax\Media\Application\Dto\UploadDto;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaUploadFailure;
-use Damax\Media\Application\Service\FactoryService;
-use Damax\Media\Application\Service\MediaService;
+use Damax\Media\Domain\Model\IdGenerator;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use SimpleBus\Message\Bus\MessageBus;
 use Swagger\Annotations as OpenApi;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\LengthRequiredHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/media")
  */
-class MediaController
+final class MediaController
 {
-    private $service;
+    private $commandBus;
+    private $idGenerator;
 
-    public function __construct(MediaService $service)
+    public function __construct(MessageBus $commandBus, IdGenerator $idGenerator)
     {
-        $this->service = $service;
+        $this->commandBus = $commandBus;
+        $this->idGenerator = $idGenerator;
     }
 
     /**
@@ -53,23 +55,29 @@ class MediaController
      *         @OpenApi\Schema(ref=@Model(type=MediaCreationDto::class))
      *     ),
      *     @OpenApi\Response(
-     *         response=201,
-     *         description="Media info.",
-     *         @OpenApi\Schema(ref=@Model(type=MediaDto::class))
+     *         response=202,
+     *         description="Request result.",
+     *         @OpenApi\Header(
+     *             header="Location",
+     *             type="string",
+     *             description="New media resource."
+     *         )
      *     )
      * )
      *
-     * @Method("POST")
-     * @Route("")
+     * @Route("", methods={"POST"})
      * @Serialize()
      * @Deserialize(MediaCreationDto::class, validate=true, param="media")
      */
-    public function createAction(FactoryService $service, MediaCreationDto $media): MediaDto
+    public function createAction(UrlGeneratorInterface $urlGenerator, MediaCreationDto $media): Response
     {
-        $command = new CreateMedia();
-        $command->media = $media;
+        $mediaId = (string) $this->idGenerator->mediaId();
 
-        return $service->createMedia($command);
+        $this->commandBus->handle(new CreateMedia($mediaId, $media));
+
+        $resource = $urlGenerator->generate('media_view', ['id' => $mediaId]);
+
+        return Response::create('', Response::HTTP_ACCEPTED, ['location' => $resource]);
     }
 
     /**
@@ -87,10 +95,14 @@ class MediaController
      *         @OpenApi\Schema(type="string", format="binary")
      *     ),
      *     @OpenApi\Response(
-     *         response=200,
-     *         description="Media info.",
-     *         @OpenApi\Schema(ref=@Model(type=MediaDto::class))
-     *     ),
+     *         response=202,
+     *         description="Request result.",
+     *         @OpenApi\Header(
+     *             header="Location",
+     *             type="string",
+     *             description="Media resource."
+     *         )
+     *     )
      *     @OpenApi\Response(
      *         response=404,
      *         description="Media not found."
@@ -101,17 +113,16 @@ class MediaController
      *     )
      * )
      *
-     * @Method("PUT")
-     * @Route("/{id}/upload")
+     * @Route("/{id}/upload", methods={"PUT"})
      * @Serialize()
      *
-     * @return MediaDto|ConstraintViolationListInterface
+     * @return Response|ConstraintViolationListInterface
      *
      * @throws LengthRequiredHttpException
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
-    public function uploadAction(Request $request, string $id, ValidatorInterface $validator)
+    public function uploadAction(Request $request, string $id, ValidatorInterface $validator, UrlGeneratorInterface $urlGenerator)
     {
         if (!($length = $request->headers->get('Content-Length'))) {
             throw new LengthRequiredHttpException();
@@ -120,7 +131,7 @@ class MediaController
         $upload = new UploadDto();
         $upload->stream = fopen('php://temp', 'wb');
         $upload->mimeType = $request->headers->get('Content-Type');
-        $upload->size = (int) $length;
+        $upload->fileSize = (int) $length;
 
         stream_copy_to_stream($request->getContent(true), $upload->stream);
 
@@ -128,50 +139,17 @@ class MediaController
             return $violations;
         }
 
-        $command = new UploadMedia();
-        $command->mediaId = $id;
-        $command->upload = $upload;
-
         try {
-            return $this->service->upload($command);
+            $this->commandBus->handle(new UploadMedia($id, $upload));
         } catch (MediaNotFound $e) {
             throw new NotFoundHttpException();
         } catch (MediaUploadFailure $e) {
-            throw new BadRequestHttpException('Upload failure.');
+            throw new BadRequestHttpException();
         }
-    }
 
-    /**
-     * @OpenApi\Get(
-     *     tags={"media"},
-     *     summary="Get media.",
-     *     security={
-     *         {"Bearer"=""}
-     *     },
-     *     @OpenApi\Response(
-     *         response=200,
-     *         description="Media info.",
-     *         @OpenApi\Schema(ref=@Model(type=MediaDto::class))
-     *     ),
-     *     @OpenApi\Response(
-     *         response=404,
-     *         description="Media not found."
-     *     )
-     * )
-     *
-     * @Method("GET")
-     * @Route("/{id}")
-     * @Serialize()
-     *
-     * @throws NotFoundHttpException
-     */
-    public function getAction(string $id): MediaDto
-    {
-        try {
-            return $this->service->fetch($id);
-        } catch (MediaNotFound $e) {
-            throw new NotFoundHttpException();
-        }
+        $resource = $urlGenerator->generate('media_download', ['id' => $id]);
+
+        return Response::create('', Response::HTTP_ACCEPTED, ['location' => $resource]);
     }
 
     /**
@@ -191,15 +169,14 @@ class MediaController
      *     )
      * )
      *
-     * @Method("DELETE")
-     * @Route("/{id}")
+     * @Route("/{id}", methods={"DELETE"})
      *
      * @throws NotFoundHttpException
      */
     public function deleteAction(string $id): Response
     {
         try {
-            $this->service->delete($id);
+            $this->commandBus->handle(new DeleteMedia($id));
         } catch (MediaNotFound $e) {
             throw new NotFoundHttpException();
         }

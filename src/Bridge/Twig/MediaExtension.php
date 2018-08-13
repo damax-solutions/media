@@ -25,7 +25,7 @@ final class MediaExtension extends Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('media_image_url', [$this->urlBuilder, 'buildImageUrl']),
+            new TwigFunction('media_image_url', [$this, 'buildImageUrl']),
         ];
     }
 

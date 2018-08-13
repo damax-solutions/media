@@ -19,7 +19,7 @@ final class UploadDto implements ArrayAccess
     /**
      * @var int
      */
-    public $size;
+    public $fileSize;
 
     /**
      * @var resource
