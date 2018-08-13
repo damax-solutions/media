@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Query;
+namespace Damax\Media\Application\Query;
 
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Application\Dto\MediaDto;

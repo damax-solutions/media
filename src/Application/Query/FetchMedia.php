@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Query;
+namespace Damax\Media\Application\Query;
 
 final class FetchMedia extends MediaQuery
 {

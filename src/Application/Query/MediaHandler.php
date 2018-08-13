@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Application\Query;
+namespace Damax\Media\Application\Query;
 
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Domain\Model\Media;

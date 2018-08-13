@@ -27,9 +27,6 @@ interface Storage
      */
     public function dump(Media $media, string $filename): void;
 
-    /**
-     * @throws InvalidFile
-     */
     public function delete(Media $media): void;
 
     /**

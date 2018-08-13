@@ -42,7 +42,9 @@ abstract class AbstractStorage implements Storage
 
     public function delete(Media $media): void
     {
-        $this->deleteFile($media->file());
+        if ($media->uploaded()) {
+            $this->deleteFile($media->file());
+        }
     }
 
     public function write(Media $media, $context = []): File

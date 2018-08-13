@@ -8,6 +8,7 @@ use Damax\Media\Application\Command\DeleteMedia;
 use Damax\Media\Application\Command\DeleteMediaHandler;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Domain\Model\MediaRepository;
+use Damax\Media\Domain\Storage\Storage;
 use Damax\Media\Tests\Domain\Model\PendingImageMedia;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,6 +26,11 @@ class DeleteMediaHandlerTest extends TestCase
     private $repository;
 
     /**
+     * @var Storage|MockObject
+     */
+    private $storage;
+
+    /**
      * @var DeleteMediaHandler
      */
     private $handler;
@@ -32,13 +38,14 @@ class DeleteMediaHandlerTest extends TestCase
     protected function setUp()
     {
         $this->repository = $this->createMock(MediaRepository::class);
-        $this->handler = new DeleteMediaHandler($this->repository);
+        $this->storage = $this->createMock(Storage::class);
+        $this->handler = new DeleteMediaHandler($this->repository, $this->storage);
     }
 
     /**
      * @test
      */
-    public function it_removes_media()
+    public function it_deletes_media()
     {
         $command = new DeleteMedia('64c2c4b7-33f5-11e8-97f3-005056806fb2');
 
@@ -53,6 +60,11 @@ class DeleteMediaHandlerTest extends TestCase
             ->expects($this->once())
             ->method('remove')
             ->with($this->identicalTo($media))
+        ;
+
+        $this->storage
+            ->expects($this->once())
+            ->method('delete')
         ;
 
         call_user_func($this->handler, $command);
