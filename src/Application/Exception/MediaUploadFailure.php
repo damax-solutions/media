@@ -6,6 +6,6 @@ namespace Damax\Media\Application\Exception;
 
 use RuntimeException;
 
-class MediaUploadFailure extends RuntimeException
+final class MediaUploadFailure extends RuntimeException
 {
 }

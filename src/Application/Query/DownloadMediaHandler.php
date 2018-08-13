@@ -2,39 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Damax\Media\Application\Service;
+namespace Application\Query;
 
 use Damax\Media\Application\Exception\MediaNotFound;
-use Damax\Media\Application\Exception\MediaNotUploaded;
 use Damax\Media\Domain\Model\MediaRepository;
 use Damax\Media\Domain\Storage\Storage;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class DownloadService
+final class DownloadMediaHandler extends MediaHandler
 {
-    use MediaServiceTrait;
-
     private $storage;
 
-    public function __construct(MediaRepository $mediaRepository, Storage $storage)
+    public function __construct(MediaRepository $repository, Storage $storage)
     {
-        $this->mediaRepository = $mediaRepository;
+        parent::__construct($repository);
+
         $this->storage = $storage;
     }
 
     /**
      * @throws MediaNotFound
-     * @throws MediaNotUploaded
      */
-    public function download(string $mediaId): Response
+    public function __invoke(DownloadMedia $query): Response
     {
-        $media = $this->getMedia($mediaId);
-
-        if (null === $media->file()) {
-            throw MediaNotUploaded::byId($mediaId);
-        }
+        $media = $this->getMedia($query);
 
         $output = fopen('php://output', 'wb');
 
@@ -44,8 +37,8 @@ class DownloadService
 
         $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $media->file()->basename());
 
-        $response->headers->set('Content-Length', $media->file()->size());
-        $response->headers->set('Content-Type', $media->file()->mimeType());
+        $response->headers->set('Content-Length', $media->info()->fileSize());
+        $response->headers->set('Content-Type', $media->info()->mimeType());
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;

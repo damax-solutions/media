@@ -6,6 +6,6 @@ namespace Damax\Media\Application\Exception;
 
 use RuntimeException;
 
-class ImageProcessingFailure extends RuntimeException
+final class ImageProcessingFailure extends RuntimeException
 {
 }
