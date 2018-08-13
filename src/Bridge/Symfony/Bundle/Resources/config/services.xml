@@ -11,12 +11,6 @@
             <tag name="controller.service_arguments" />
         </prototype>
 
-        <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Listener\" resource="../../Listener" />
-
-        <!-- Forms -->
-
-        <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Form\" resource="../../Form" />
-
         <!-- Validators -->
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Validator\Constraints\" resource="../../../Validator/Constraints" />
@@ -27,15 +21,29 @@
 
         <!-- Application -->
 
-        <prototype namespace="Damax\Media\Application\Service\" resource="../../../../../Application/Service" />
+        <prototype namespace="Damax\Media\Application\Query\" resource="../../../../../Application/Query/*Handler.php">
+            <tag name="tactician.handler" typehints="true" />
+        </prototype>
+
+        <service id="Damax\Media\Application\Command\CreateMediaHandler" public="true">
+            <tag name="command_handler" handles="Damax\Media\Application\Command\CreateMedia" />
+        </service>
+
+        <service id="Damax\Media\Application\Command\DeleteMediaHandler" public="true">
+            <tag name="command_handler" handles="Damax\Media\Application\Command\DeleteMedia" />
+        </service>
+
+        <service id="Damax\Media\Application\Command\UploadMediaHandler" public="true">
+            <tag name="command_handler" handles="Damax\Media\Application\Command\UploadMedia" />
+        </service>
 
         <service id="Damax\Media\Application\Dto\Assembler" />
 
         <!-- Domain -->
 
-        <service id="Damax\Media\Domain\Model\MediaFactory" class="Damax\Media\Domain\Model\ConfigurableMediaFactory" />
+        <service id="Damax\Media\Domain\Model\MediaFactory" class="Damax\Media\Domain\Model\DefaultMediaFactory" />
 
-        <service id="Damax\Media\Domain\Storage\ExtensionGuesser" class="Damax\Media\Domain\Storage\SymfonyExtensionGuesser" />
+        <service id="Damax\Media\Domain\Storage\Guesser\Guesser" class="Damax\Media\Domain\Storage\Guesser\SymfonyGuesser" />
 
         <service id="Damax\Media\Domain\Metadata\Reader" class="Damax\Media\Domain\Metadata\Collector">
             <argument type="tagged" tag="damax.media.reader" />
@@ -43,13 +51,9 @@
 
         <service id="Damax\Media\Domain\FileFormatter" />
 
-        <!-- Types -->
-
-        <service id="Damax\Media\Type\Types" />
-
         <!-- Flysystem -->
 
-        <service id="Damax\Media\Flysystem\Registry" class="Damax\Media\Flysystem\ContainerRegistry" />
+        <service id="Damax\Media\Flysystem\Registry\Registry" class="Damax\Media\Flysystem\Registry\ContainerRegistry" />
 
         <!-- Reader -->
 

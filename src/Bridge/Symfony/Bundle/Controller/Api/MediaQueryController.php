@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bridge\Symfony\Bundle\Controller\Api;
+namespace Damax\Media\Bridge\Symfony\Bundle\Controller\Api;
 
 use Damax\Common\Bridge\Symfony\Bundle\Annotation\Serialize;
 use Damax\Media\Application\Dto\MediaDto;

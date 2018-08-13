@@ -14,7 +14,7 @@
         <property name="mimeType">
             <constraint name="NotBlank" />
         </property>
-        <property name="size">
+        <property name="fileSize">
             <constraint name="NotBlank" />
             <constraint name="GreaterThan">
                 <option name="value">16</option>
@@ -31,7 +31,7 @@
         <property name="mimeType">
             <constraint name="NotBlank" />
         </property>
-        <property name="size">
+        <property name="fileSize">
             <constraint name="GreaterThan">
                 <option name="value">16</option>
             </constraint>

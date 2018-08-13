@@ -25,13 +25,35 @@ final class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('damax_media');
         $rootNode
             ->children()
-                ->append($this->typesNode('types'))
                 ->append($this->storageNode('storage'))
+                ->append($this->typesNode('types'))
                 ->append($this->glideNode('glide'))
             ->end()
         ;
 
         return $treeBuilder;
+    }
+
+    private function storageNode(string $name): ArrayNodeDefinition
+    {
+        return (new ArrayNodeDefinition($name))
+            ->isRequired()
+            ->beforeNormalization()
+                ->ifString()
+                ->then(function (string $adapter) {
+                    return ['adapter' => $adapter];
+                })
+            ->end()
+            ->children()
+                ->enumNode('adapter')
+                    ->isRequired()
+                    ->values([self::ADAPTER_GAUFRETTE, self::ADAPTER_FLYSYSTEM])
+                ->end()
+                ->integerNode('key_length')
+                    ->defaultValue(8)
+                ->end()
+            ->end()
+        ;
     }
 
     private function typesNode(string $name): ArrayNodeDefinition
@@ -57,21 +79,6 @@ final class Configuration implements ConfigurationInterface
                             ->cannotBeEmpty()
                         ->end()
                     ->end()
-                ->end()
-            ->end()
-        ;
-    }
-
-    private function storageNode(string $name): ArrayNodeDefinition
-    {
-        return (new ArrayNodeDefinition($name))
-            ->isRequired()
-            ->children()
-                ->enumNode('adapter')
-                    ->values([self::ADAPTER_GAUFRETTE, self::ADAPTER_FLYSYSTEM])
-                ->end()
-                ->integerNode('key_length')
-                    ->defaultValue(8)
                 ->end()
             ->end()
         ;

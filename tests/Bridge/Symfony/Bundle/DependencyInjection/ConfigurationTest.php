@@ -18,11 +18,7 @@ class ConfigurationTest extends TestCase
      */
     public function it_processes_empty_config()
     {
-        $config = [
-            'storage' => [
-                'adapter' => 'flysystem',
-            ],
-        ];
+        $config = ['storage' => 'flysystem'];
 
         $this->assertProcessedConfigurationEquals([$config], [
             'types' => [],
@@ -36,7 +32,42 @@ class ConfigurationTest extends TestCase
     /**
      * @test
      */
-    public function it_processes_config()
+    public function it_processes_simplified_storage_config()
+    {
+        $config = ['storage' => 'gaufrette'];
+
+        $this->assertProcessedConfigurationEquals([$config], [
+            'storage' => [
+                'adapter' => 'gaufrette',
+                'key_length' => 8,
+            ],
+        ], 'storage');
+    }
+
+    /**
+     * @test
+     */
+    public function it_processes_storage_config()
+    {
+        $config = [
+            'storage' => [
+                'adapter' => 'gaufrette',
+                'key_length' => 12,
+            ],
+        ];
+
+        $this->assertProcessedConfigurationEquals([$config], [
+            'storage' => [
+                'adapter' => 'gaufrette',
+                'key_length' => 12,
+            ],
+        ], 'storage');
+    }
+
+    /**
+     * @test
+     */
+    public function it_processes_types_config()
     {
         $config = [
             'types' => [
@@ -50,10 +81,6 @@ class ConfigurationTest extends TestCase
                     'max_file_size' => 8,
                     'mime_types' => ['image/jpg', 'image/png', 'image/gif'],
                 ],
-            ],
-            'storage' => [
-                'adapter' => 'flysystem',
-                'key_length' => 12,
             ],
         ];
 
@@ -70,11 +97,7 @@ class ConfigurationTest extends TestCase
                     'mime_types' => ['image/jpg', 'image/png', 'image/gif'],
                 ],
             ],
-            'storage' => [
-                'adapter' => 'flysystem',
-                'key_length' => 12,
-            ],
-        ]);
+        ], 'types');
     }
 
     /**
@@ -85,12 +108,12 @@ class ConfigurationTest extends TestCase
         $config = [
             'glide' => [
                 'driver' => 'gd',
-                'source' => 'foo',
-                'cache' => 'bar',
+                'source' => 's3',
+                'cache' => 'local',
                 'max_image_size' => 4,
                 'presets' => [
                     'small' => ['w' => 200, 'h' => 200, 'fit' => 'crop'],
-                    'medium' => ['w' => 600, 'h' => 400, 'fit' => 'crop'],
+                    'medium' => ['w' => 640, 'h' => 480, 'fit' => 'crop'],
                 ],
                 'defaults' => [
                     'fm' => 'png',
@@ -102,14 +125,14 @@ class ConfigurationTest extends TestCase
         $this->assertProcessedConfigurationEquals([$config], [
             'glide' => [
                 'driver' => 'gd',
-                'source' => 'foo',
-                'cache' => 'bar',
+                'source' => 's3',
+                'cache' => 'local',
                 'group_cache_in_folders' => true,
                 'max_image_size' => 4194304,
                 'sign_key' => '%kernel.secret%',
                 'presets' => [
                     'small' => ['w' => 200, 'h' => 200, 'fit' => 'crop'],
-                    'medium' => ['w' => 600, 'h' => 400, 'fit' => 'crop'],
+                    'medium' => ['w' => 640, 'h' => 480, 'fit' => 'crop'],
                 ],
                 'defaults' => [
                     'fm' => 'png',

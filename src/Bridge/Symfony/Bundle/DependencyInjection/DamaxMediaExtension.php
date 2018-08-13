@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Damax\Media\Bridge\Symfony\Bundle\DependencyInjection;
 
-use Damax\Media\Application\Service\ImageService;
-use Damax\Media\Bridge\Twig\MediaExtension;
 use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Image\UrlBuilder;
 use Damax\Media\Domain\Model\Media;
-use Damax\Media\Domain\Storage\Keys;
-use Damax\Media\Domain\Storage\RandomKeys;
+use Damax\Media\Domain\Storage\Keys\Keys;
+use Damax\Media\Domain\Storage\Keys\RandomKeys;
 use Damax\Media\Domain\Storage\Storage;
 use Damax\Media\Glide\GlideManipulator;
 use Damax\Media\Glide\SignedUrlBuilder;
@@ -26,7 +24,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class DamaxMediaExtension extends ConfigurableExtension
+final class DamaxMediaExtension extends ConfigurableExtension
 {
     protected function loadInternal(array $config, ContainerBuilder $container)
     {
@@ -35,17 +33,36 @@ class DamaxMediaExtension extends ConfigurableExtension
         $loader->load('doctrine-orm.xml');
 
         $this
-            ->configureTypes($config['types'], $container)
             ->configureStorage($config['storage'], $container)
+            ->configureTypes($config['types'], $container)
         ;
+
+        $container->setParameter('damax.media.media_class', Media::class);
 
         if (!empty($config['glide'])) {
             $this->configureGlide($config['glide'], $container);
-        } else {
-            $container->removeDefinition(ImageService::class);
+        }
+    }
+
+    private function configureStorage(array $config, ContainerBuilder $container): self
+    {
+        $storage = ucfirst($config['adapter']);
+
+        $container->autowire(Storage::class, sprintf('Damax\\Media\\%s\\%sStorage', $storage, $storage));
+
+        $container
+            ->autowire(Keys::class, RandomKeys::class)
+            ->setArgument(1, $config['key_length'])
+        ;
+
+        if (Configuration::ADAPTER_GAUFRETTE === $config['adapter']) {
+            $container
+                ->register(FilesystemMap::class)
+                ->setFactory(StreamWrapper::class . '::getFilesystemMap')
+            ;
         }
 
-        $container->setParameter('damax.media.media_class', Media::class);
+        return $this;
     }
 
     private function configureTypes(array $config, ContainerBuilder $container): self
@@ -60,31 +77,10 @@ class DamaxMediaExtension extends ConfigurableExtension
             ]);
         }
 
-        $container->getDefinition(Types::class)->setArgument(0, $types);
-
-        return $this;
-    }
-
-    private function configureStorage(array $config, ContainerBuilder $container): self
-    {
-        $storageClass = sprintf('Damax\\Media\\%s\\%sStorage', ucfirst($config['adapter']), ucfirst($config['adapter']));
-
         $container
-            ->register(Storage::class, $storageClass)
-            ->setAutowired(true)
+            ->register(Types::class)
+            ->addArgument($types)
         ;
-        $container
-            ->register(Keys::class, RandomKeys::class)
-            ->setArgument(1, $config['key_length'])
-            ->setAutowired(true)
-        ;
-
-        if (Configuration::ADAPTER_GAUFRETTE === $config['adapter']) {
-            $container
-                ->register(FilesystemMap::class)
-                ->setFactory(StreamWrapper::class . '::getFilesystemMap')
-            ;
-        }
 
         return $this;
     }
@@ -95,24 +91,15 @@ class DamaxMediaExtension extends ConfigurableExtension
         unset($serverParams['sign_key']);
 
         $container
-            ->register(SignatureInterface::class, Signature::class)
+            ->autowire(SignatureInterface::class, Signature::class)
             ->addArgument($config['sign_key'])
-            ->setAutowired(true)
         ;
         $container
-            ->register(UrlBuilder::class, SignedUrlBuilder::class)
-            ->setAutowired(true)
-        ;
-        $container
-            ->register(MediaExtension::class)
-            ->addTag('twig.extension')
-            ->setAutowired(true)
-        ;
-        $container
-            ->register(Manipulator::class, GlideManipulator::class)
+            ->autowire(Manipulator::class, GlideManipulator::class)
             ->setArgument(3, $serverParams)
-            ->setAutowired(true)
         ;
+
+        $container->autowire(UrlBuilder::class, SignedUrlBuilder::class);
 
         return $this;
     }
