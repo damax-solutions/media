@@ -5,22 +5,16 @@ declare(strict_types=1);
 namespace Damax\Media\Application\Command;
 
 use Damax\Media\Application\Dto\UploadDto;
-use Damax\Media\Domain\Model\MediaId;
 
-final class UploadMedia
+final class UploadMedia extends MediaCommand
 {
-    private $mediaId;
     private $upload;
 
     public function __construct(string $mediaId, UploadDto $upload)
     {
-        $this->mediaId = $mediaId;
-        $this->upload = $upload;
-    }
+        parent::__construct($mediaId);
 
-    public function mediaId(): MediaId
-    {
-        return MediaId::fromString($this->mediaId);
+        $this->upload = $upload;
     }
 
     public function upload(): UploadDto

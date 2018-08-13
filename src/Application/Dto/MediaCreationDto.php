@@ -29,5 +29,5 @@ final class MediaCreationDto implements ArrayAccess
     /**
      * @var int
      */
-    public $size;
+    public $fileSize;
 }

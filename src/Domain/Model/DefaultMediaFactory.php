@@ -8,16 +8,10 @@ use Assert\Assert;
 
 final class DefaultMediaFactory implements MediaFactory
 {
-    private $repository;
-
-    public function __construct(MediaRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     public function create($data): Media
     {
         Assert::that($data)
+            ->keyIsset('id')
             ->keyIsset('type')
             ->keyIsset('name')
             ->keyIsset('mime_type')
@@ -26,8 +20,6 @@ final class DefaultMediaFactory implements MediaFactory
 
         $info = FileInfo::fromArray($data);
 
-        $userId = isset($data['user_id']) ? UserId::fromString($data['user_id']) : null;
-
-        return new Media($this->repository->nextId(), $data['type'], $data['name'], $info, $userId);
+        return new Media($data['id'], $data['type'], $data['name'], $info, $data['user_id'] ?? null);
     }
 }

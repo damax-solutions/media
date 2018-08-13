@@ -9,7 +9,6 @@ use Damax\Media\Domain\Model\Media;
 use Damax\Media\Domain\Model\MediaId;
 use Damax\Media\Domain\Model\MediaRepository as MediaRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
 
 final class MediaRepository implements MediaRepositoryInterface
 {
@@ -19,11 +18,6 @@ final class MediaRepository implements MediaRepositoryInterface
     {
         $this->em = $em;
         $this->className = $mediaClassName;
-    }
-
-    public function nextId(): MediaId
-    {
-        return MediaId::fromString((string) Uuid::uuid4());
     }
 
     public function byId(MediaId $id): ?Media

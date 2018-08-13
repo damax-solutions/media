@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Application\Command;
+namespace Damax\Media\Application\Command;
 
 use Damax\Common\Domain\Model\Metadata;
-use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Domain\Metadata\Reader;

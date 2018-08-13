@@ -6,17 +6,11 @@ namespace Damax\Media\Tests\Domain\Model;
 
 use Damax\Media\Domain\Model\DefaultMediaFactory;
 use Damax\Media\Domain\Model\MediaId;
-use Damax\Media\Domain\Model\MediaRepository;
-use PHPUnit\Framework\MockObject\MockObject;
+use Damax\Media\Domain\Model\UserId;
 use PHPUnit\Framework\TestCase;
 
 class DefaultMediaFactoryTest extends TestCase
 {
-    /**
-     * @var MediaRepository|MockObject
-     */
-    private $repository;
-
     /**
      * @var DefaultMediaFactory
      */
@@ -24,8 +18,7 @@ class DefaultMediaFactoryTest extends TestCase
 
     protected function setUp()
     {
-        $this->repository = $this->createMock(MediaRepository::class);
-        $this->factory = new DefaultMediaFactory($this->repository);
+        $this->factory = new DefaultMediaFactory();
     }
 
     /**
@@ -33,20 +26,13 @@ class DefaultMediaFactoryTest extends TestCase
      */
     public function it_creates_media()
     {
-        $mediaId = MediaId::fromString('183702c5-30de-11e8-97f3-005056806fb2');
-
-        $this->repository
-            ->expects($this->once())
-            ->method('nextId')
-            ->willReturn($mediaId)
-        ;
-
         $media = $this->factory->create([
+            'id' => MediaId::fromString('183702c5-30de-11e8-97f3-005056806fb2'),
             'type' => 'document',
             'name' => 'Test PDF document',
             'mime_type' => 'application/pdf',
             'file_size' => 1024,
-            'user_id' => '04907d72-9c88-11e8-add5-0242ac110004',
+            'user_id' => UserId::fromString('04907d72-9c88-11e8-add5-0242ac110004'),
         ]);
 
         $this->assertEquals('183702c5-30de-11e8-97f3-005056806fb2', (string) $media->id());

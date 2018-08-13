@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Application\Command;
+namespace Damax\Media\Application\Command;
 
-use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Domain\Model\MediaFactory;
 use Damax\Media\Domain\Model\MediaRepository;
 
@@ -21,7 +20,15 @@ final class CreateMediaHandler
 
     public function __invoke(CreateMedia $command): void
     {
-        $media = $this->factory->create($command->media());
+        $dto = $command->media();
+
+        $media = $this->factory->create([
+            'id' => $command->mediaId(),
+            'type' => $dto->type,
+            'name' => $dto->name,
+            'mime_type' => $dto->mimeType,
+            'file_size' => $dto->fileSize,
+        ]);
 
         $this->repository->add($media);
     }

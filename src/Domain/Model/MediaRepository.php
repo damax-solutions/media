@@ -6,8 +6,6 @@ namespace Damax\Media\Domain\Model;
 
 interface MediaRepository
 {
-    public function nextId(): MediaId;
-
     public function byId(MediaId $id): ?Media;
 
     public function add(Media $media): void;

@@ -35,10 +35,12 @@ final class DownloadMediaHandler extends MediaHandler
             $this->storage->streamTo($media, $output);
         });
 
-        $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $media->file()->basename());
+        $file = $media->file();
 
-        $response->headers->set('Content-Length', $media->info()->fileSize());
-        $response->headers->set('Content-Type', $media->info()->mimeType());
+        $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $file->basename());
+
+        $response->headers->set('Content-Length', $file->info()->fileSize());
+        $response->headers->set('Content-Type', $file->info()->mimeType());
         $response->headers->set('Content-Disposition', $disposition);
 
         return $response;
