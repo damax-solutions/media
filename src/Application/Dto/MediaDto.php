@@ -6,7 +6,7 @@ namespace Damax\Media\Application\Dto;
 
 use DateTime;
 
-class MediaDto
+final class MediaDto
 {
     /**
      * @var string
@@ -36,7 +36,7 @@ class MediaDto
     /**
      * @var int
      */
-    public $size;
+    public $fileSize;
 
     /**
      * @var DateTime

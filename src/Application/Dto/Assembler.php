@@ -6,7 +6,7 @@ namespace Damax\Media\Application\Dto;
 
 use Damax\Media\Domain\Model\Media;
 
-class Assembler
+final class Assembler
 {
     public function toMediaDto(Media $media): MediaDto
     {
@@ -17,7 +17,7 @@ class Assembler
         $dto->type = $media->type();
         $dto->name = $media->name();
         $dto->mimeType = $media->info()->mimeType();
-        $dto->size = $media->info()->size();
+        $dto->fileSize = $media->info()->fileSize();
         $dto->createdAt = $media->createdAt();
         $dto->updatedAt = $media->updatedAt();
         $dto->metadata = $media->metadata()->all();

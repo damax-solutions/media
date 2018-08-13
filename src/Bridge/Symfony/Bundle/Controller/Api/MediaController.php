@@ -10,7 +10,7 @@ use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\UploadMedia;
 use Damax\Media\Application\Dto\MediaCreationDto;
 use Damax\Media\Application\Dto\MediaDto;
-use Damax\Media\Application\Dto\MediaUploadDto;
+use Damax\Media\Application\Dto\UploadDto;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaUploadFailure;
 use Damax\Media\Application\Service\FactoryService;
@@ -117,7 +117,7 @@ class MediaController
             throw new LengthRequiredHttpException();
         }
 
-        $upload = new MediaUploadDto();
+        $upload = new UploadDto();
         $upload->stream = fopen('php://temp', 'wb');
         $upload->mimeType = $request->headers->get('Content-Type');
         $upload->size = (int) $length;

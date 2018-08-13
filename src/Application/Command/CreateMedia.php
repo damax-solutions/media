@@ -6,10 +6,17 @@ namespace Damax\Media\Application\Command;
 
 use Damax\Media\Application\Dto\MediaCreationDto;
 
-class CreateMedia
+final class CreateMedia
 {
-    /**
-     * @var MediaCreationDto
-     */
-    public $media;
+    private $media;
+
+    public function __construct(MediaCreationDto $media)
+    {
+        $this->media = $media;
+    }
+
+    public function media(): MediaCreationDto
+    {
+        return $this->media;
+    }
 }

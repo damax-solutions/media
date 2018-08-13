@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "067c18ff4641be5b32084a192c49574b",
@@ -67,12 +67,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lakiboy/damax-common.git",
-                "reference": "af77def7baaef79b3b10eaafdfe290bc11948a1b"
+                "reference": "3d908b661676be931dc12b48368ba8ceebaa10bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lakiboy/damax-common/zipball/af77def7baaef79b3b10eaafdfe290bc11948a1b",
-                "reference": "af77def7baaef79b3b10eaafdfe290bc11948a1b",
+                "url": "https://api.github.com/repos/lakiboy/damax-common/zipball/3d908b661676be931dc12b48368ba8ceebaa10bd",
+                "reference": "3d908b661676be931dc12b48368ba8ceebaa10bd",
                 "shasum": ""
             },
             "require": {
@@ -115,7 +115,7 @@
                 "MIT"
             ],
             "description": "Utilities and helpers for building DDD apps and APIs.",
-            "time": "2018-07-31T16:16:08+00:00"
+            "time": "2018-08-13T09:11:54+00:00"
         },
         {
             "name": "paragonie/random_compat",

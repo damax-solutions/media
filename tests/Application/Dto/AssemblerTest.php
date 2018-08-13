@@ -24,7 +24,7 @@ class AssemblerTest extends TestCase
     /**
      * @test
      */
-    public function it_assembles_media_dto()
+    public function it_converts_media_to_dto()
     {
         $dto = $this->assembler->toMediaDto(new PendingPdfMedia());
 
@@ -33,7 +33,7 @@ class AssemblerTest extends TestCase
         $this->assertEquals('document', $dto->type);
         $this->assertEquals('Test PDF document', $dto->name);
         $this->assertEquals('application/pdf', $dto->mimeType);
-        $this->assertEquals(1024, $dto->size);
+        $this->assertEquals(1024, $dto->fileSize);
         $this->assertInstanceOf(DateTimeInterface::class, $dto->createdAt);
         $this->assertInstanceOf(DateTimeInterface::class, $dto->updatedAt);
         $this->assertEquals([], $dto->metadata);

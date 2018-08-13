@@ -6,10 +6,12 @@ namespace Damax\Media\Bridge\Twig;
 
 use Damax\Media\Domain\FileFormatter;
 use Damax\Media\Domain\Image\UrlBuilder;
+use Damax\Media\Domain\Model\MediaId;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig_Extension;
 
-class MediaExtension extends \Twig_Extension
+final class MediaExtension extends Twig_Extension
 {
     private $fileFormatter;
     private $urlBuilder;
@@ -23,24 +25,21 @@ class MediaExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('media_image_url', [$this, 'buildImageUrl']),
+            new TwigFunction('media_image_url', [$this->urlBuilder, 'buildImageUrl']),
         ];
     }
 
     public function getFilters(): array
     {
         return [
-            new TwigFilter('media_file_size', [$this, 'formatFileSize']),
+            new TwigFilter('media_file_size', [$this->fileFormatter, 'formatSize']),
         ];
     }
 
-    public function buildImageUrl(string $mediaId, array $params = []): string
+    public function buildImageUrl(string $imageId, array $params = []): string
     {
-        return $this->urlBuilder->build($mediaId, $params);
-    }
+        $mediaId = MediaId::fromString($imageId);
 
-    public function formatFileSize(int $size): string
-    {
-        return $this->fileFormatter->formatSize($size);
+        return $this->urlBuilder->build($mediaId, $params);
     }
 }
