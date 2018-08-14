@@ -130,11 +130,9 @@ final class MediaController
         }
 
         $upload = new UploadDto();
-        $upload->stream = fopen('php://temp', 'wb');
+        $upload->stream = $request->getContent(true);
         $upload->mimeType = $request->headers->get('Content-Type');
         $upload->fileSize = (int) $length;
-
-        stream_copy_to_stream($request->getContent(true), $upload->stream);
 
         if (count($violations = $validator->validate($upload))) {
             return $violations;
