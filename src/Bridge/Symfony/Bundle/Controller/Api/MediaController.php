@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Damax\Media\Bridge\Symfony\Bundle\Controller\Api;
 
 use Damax\Common\Bridge\Symfony\Bundle\Annotation\Deserialize;
-use Damax\Common\Bridge\Symfony\Bundle\Annotation\Serialize;
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\DeleteMedia;
 use Damax\Media\Application\Command\UploadMedia;
@@ -66,7 +65,6 @@ final class MediaController
      * )
      *
      * @Route("", methods={"POST"})
-     * @Serialize()
      * @Deserialize(MediaCreationDto::class, validate=true, param="media")
      */
     public function createAction(IdGenerator $idGenerator, MediaCreationDto $media): Response
@@ -115,7 +113,6 @@ final class MediaController
      * )
      *
      * @Route("/{id}/upload", methods={"PUT"})
-     * @Serialize()
      *
      * @return Response|ConstraintViolationListInterface
      *
