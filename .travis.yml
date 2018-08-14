@@ -25,7 +25,7 @@ matrix:
 
 install:
     - composer install --prefer-dist
-    - if [ "$SYMFONY_LOWEST" != "" ]; then composer require symfony/framework-bundle:$SYMFONY_LOWEST symfony/http-foundation:$SYMFONY_LOWEST symfony/validator:$SYMFONY_LOWEST --dev; fi
+    - if [ "$SYMFONY_LOWEST" != "" ]; then composer require symfony/framework-bundle:$SYMFONY_LOWEST symfony/validator:$SYMFONY_LOWEST --dev; fi
 
 script:
     - composer test-ci
