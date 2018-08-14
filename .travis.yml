@@ -1,0 +1,34 @@
+sudo: false
+
+language: php
+
+php:
+    - 7.1
+    - 7.2
+
+services:
+    - mongodb
+
+env:
+    global:
+        - SYMFONY_PHPUNIT_VERSION=6.5
+        - SYMFONY_LOWEST=
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+matrix:
+    include:
+        - php: 7.1
+          env: SYMFONY_LOWEST="3.4.*"
+
+install:
+    - composer install --prefer-dist
+    - if [ "$SYMFONY_LOWEST" != "" ]; then composer require symfony/framework-bundle:$SYMFONY_LOWEST symfony/http-foundation:$SYMFONY_LOWEST symfony/validator:$SYMFONY_LOWEST --dev; fi
+
+script:
+    - composer test-ci
+
+after_script:
+    - composer test-publish

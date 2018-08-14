@@ -71,6 +71,7 @@ final class MediaController
      */
     public function createAction(IdGenerator $idGenerator, MediaCreationDto $media): Response
     {
+        // Violation of DDD?
         $mediaId = (string) $idGenerator->mediaId();
 
         $this->commandBus->handle(new CreateMedia($mediaId, $media));
