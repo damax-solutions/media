@@ -12,7 +12,9 @@ use Damax\Media\Domain\Image\UrlBuilder;
 use Damax\Media\Domain\Metadata\Collector;
 use Damax\Media\Domain\Metadata\Reader;
 use Damax\Media\Domain\Model\DefaultMediaFactory;
+use Damax\Media\Domain\Model\IdGenerator;
 use Damax\Media\Domain\Model\MediaFactory;
+use Damax\Media\Domain\Model\UuidIdGenerator;
 use Damax\Media\Domain\Storage\Guesser\Guesser;
 use Damax\Media\Domain\Storage\Guesser\SymfonyGuesser;
 use Damax\Media\Domain\Storage\Keys\Keys;
@@ -41,6 +43,7 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasParameter('damax.media.media_class');
         $this->assertContainerBuilderHasService(Assembler::class);
         $this->assertContainerBuilderHasService(MediaFactory::class, DefaultMediaFactory::class);
+        $this->assertContainerBuilderHasService(IdGenerator::class, UuidIdGenerator::class);
         $this->assertContainerBuilderHasService(Guesser::class, SymfonyGuesser::class);
         $this->assertContainerBuilderHasService(Reader::class, Collector::class);
         $this->assertContainerBuilderHasService(FileFormatter::class);

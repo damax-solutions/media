@@ -44,7 +44,7 @@ final class MediaQueryController
      *     )
      * )
      *
-     * @Route("/{id}", methods={"GET"})
+     * @Route("/{id}", methods={"GET"}, name="media_view")
      * @Serialize()
      *
      * @throws NotFoundHttpException

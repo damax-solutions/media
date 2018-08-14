@@ -4,7 +4,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <entity table="media" name="Damax\Media\Domain\Model\Media" change-tracking-policy="DEFERRED_EXPLICIT">
-        <id name="id" type="string">
+        <id name="id" type="uuid">
             <generator strategy="NONE" />
         </id>
 
@@ -19,8 +19,8 @@
         <field name="createdAt" type="datetimetz" />
         <field name="updatedAt" type="datetimetz" />
 
-        <field name="createdById" nullable="true" />
-        <field name="updatedById" nullable="true" />
+        <field name="createdById" type="uuid" nullable="true" />
+        <field name="updatedById" type="uuid" nullable="true" />
 
     </entity>
 

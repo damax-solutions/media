@@ -41,7 +41,7 @@ class Media
 
     public function id(): MediaId
     {
-        return MediaId::fromString($this->id);
+        return MediaId::fromString((string) $this->id);
     }
 
     public function status(): string
@@ -103,12 +103,12 @@ class Media
 
     public function createdById(): ?UserId
     {
-        return $this->createdById ? UserId::fromString($this->createdById) : null;
+        return $this->createdById ? UserId::fromString((string) $this->createdById) : null;
     }
 
     public function updatedById(): ?UserId
     {
-        return $this->updatedById ? UserId::fromString($this->updatedById) : null;
+        return $this->updatedById ? UserId::fromString((string) $this->updatedById) : null;
     }
 
     /**

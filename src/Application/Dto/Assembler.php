@@ -12,7 +12,7 @@ final class Assembler
     {
         $dto = new MediaDto();
 
-        $dto->id = $media->id();
+        $dto->id = (string) $media->id();
         $dto->status = $media->status();
         $dto->type = $media->type();
         $dto->name = $media->name();

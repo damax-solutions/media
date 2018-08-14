@@ -45,6 +45,8 @@
 
         <service id="Damax\Media\Domain\Model\MediaFactory" class="Damax\Media\Domain\Model\DefaultMediaFactory" />
 
+        <service id="Damax\Media\Domain\Model\IdGenerator" class="Damax\Media\Domain\Model\UuidIdGenerator" />
+
         <service id="Damax\Media\Domain\Storage\Guesser\Guesser" class="Damax\Media\Domain\Storage\Guesser\SymfonyGuesser" />
 
         <service id="Damax\Media\Domain\Metadata\Reader" class="Damax\Media\Domain\Metadata\Collector">
