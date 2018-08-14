@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Bridge\Symfony\Bundle\DependencyInjection;
 
+use Damax\Media\Application\Query\GetImageHandler;
 use Damax\Media\Domain\Image\Manipulator;
 use Damax\Media\Domain\Image\UrlBuilder;
 use Damax\Media\Domain\Model\Media;
@@ -41,6 +42,8 @@ final class DamaxMediaExtension extends ConfigurableExtension
 
         if (!empty($config['glide'])) {
             $this->configureGlide($config['glide'], $container);
+        } else {
+            $container->removeDefinition(GetImageHandler::class);
         }
     }
 

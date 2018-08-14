@@ -8,6 +8,8 @@
         <defaults autowire="true" autoconfigure="true" public="false" />
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Bundle\Controller\" resource="../../Controller">
+            <bind key="$commandBus" type="service" id="command_bus" />
+
             <tag name="controller.service_arguments" />
         </prototype>
 
