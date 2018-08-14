@@ -25,6 +25,7 @@
     "league/tactician": "^1.0",
     "matthiasnoback/symfony-dependency-injection-test": "^3.0",
     "nelmio/api-doc-bundle": "^3.2",
+    "php-coveralls/php-coveralls": "^2.1",
     "simple-bus/message-bus": "^3.0",
     "symfony/framework-bundle": "^4.1",
     "symfony/phpunit-bridge": "^4.0",
