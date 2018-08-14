@@ -103,7 +103,7 @@ final class MediaController
      *             type="string",
      *             description="Media resource."
      *         )
-     *     )
+     *     ),
      *     @OpenApi\Response(
      *         response=404,
      *         description="Media not found."
