@@ -24,7 +24,7 @@ final class FormatValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, Format::class);
         }
 
-        if (!$value->type || !$this->types->hasDefinition($value->type)) {
+        if (!$value || !$value->type || !$this->types->hasDefinition($value->type)) {
             return;
         }
 
