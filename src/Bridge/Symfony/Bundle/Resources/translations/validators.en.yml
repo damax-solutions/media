@@ -1,3 +1,5 @@
 damax_media:
     type:
         invalid: "Invalid type."
+    format:
+        invalid: "Invalid file format!"

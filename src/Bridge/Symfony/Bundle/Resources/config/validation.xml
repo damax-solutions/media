@@ -20,6 +20,8 @@
                 <option name="value">16</option>
             </constraint>
         </property>
+
+        <constraint name="Damax\Media\Bridge\Symfony\Validator\Constraints\Format" />
     </class>
 
     <class name="Damax\Media\Application\Dto\MediaUploadDto">
