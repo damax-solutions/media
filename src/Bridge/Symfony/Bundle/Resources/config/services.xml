@@ -17,6 +17,13 @@
 
         <prototype namespace="Damax\Media\Bridge\Symfony\Validator\Constraints\" resource="../../../Validator/Constraints" />
 
+        <!-- Serializer -->
+
+        <service id="damax.media.normalizer.media_id" class="Damax\Common\Bridge\Symfony\Serializer\EntityIdNormalizer">
+            <argument>Damax\Media\Domain\Model\MediaId</argument>
+            <tag name="serializer.normalizer" />
+        </service>
+
         <!-- Twig -->
 
         <prototype namespace="Damax\Media\Bridge\Twig\" resource="../../../../Twig" />

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Damax\Media\Tests\Bridge\Symfony\Bundle\DependencyInjection;
 
+use Damax\Common\Bridge\Symfony\Serializer\EntityIdNormalizer;
 use Damax\Media\Application\Dto\Assembler;
 use Damax\Media\Bridge\Symfony\Bundle\DependencyInjection\DamaxMediaExtension;
 use Damax\Media\Domain\FileFormatter;
@@ -14,6 +15,7 @@ use Damax\Media\Domain\Metadata\Reader;
 use Damax\Media\Domain\Model\DefaultMediaFactory;
 use Damax\Media\Domain\Model\IdGenerator;
 use Damax\Media\Domain\Model\MediaFactory;
+use Damax\Media\Domain\Model\MediaId;
 use Damax\Media\Domain\Model\UuidIdGenerator;
 use Damax\Media\Domain\Storage\Guesser\Guesser;
 use Damax\Media\Domain\Storage\Guesser\SymfonyGuesser;
@@ -49,6 +51,10 @@ class DamaxMediaExtensionTest extends AbstractExtensionTestCase
         $this->assertContainerBuilderHasService(FileFormatter::class);
         $this->assertContainerBuilderHasService(GdImageReader::class);
         $this->assertContainerBuilderHasServiceDefinitionWithTag(GdImageReader::class, 'damax.media.reader');
+
+        $this->assertContainerBuilderHasService('damax.media.normalizer.media_id', EntityIdNormalizer::class);
+        $this->assertContainerBuilderHasServiceDefinitionWithArgument('damax.media.normalizer.media_id', 0, MediaId::class);
+        $this->assertContainerBuilderHasServiceDefinitionWithTag('damax.media.normalizer.media_id', 'serializer.normalizer');
     }
 
     /**
