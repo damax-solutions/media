@@ -1,4 +1,4 @@
-FROM php:7.2-cli
+FROM php:7.1-cli
 
 LABEL maintainer="dmitri@devmachine.net"
 
@@ -30,3 +30,5 @@ RUN apt-get update && apt-get install -y git && rm -r /var/lib/apt/lists/*
 RUN cd /usr/local/bin \
     && php -r "readfile('https://getcomposer.org/installer');" | php \
     && mv composer.phar composer
+
+ENV SYMFONY_PHPUNIT_VERSION=6.5
