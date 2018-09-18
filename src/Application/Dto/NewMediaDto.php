@@ -7,7 +7,7 @@ namespace Damax\Media\Application\Dto;
 use ArrayAccess;
 use Damax\Common\Application\AsArrayTrait;
 
-final class MediaCreationDto implements ArrayAccess
+final class NewMediaDto implements ArrayAccess
 {
     use AsArrayTrait;
 

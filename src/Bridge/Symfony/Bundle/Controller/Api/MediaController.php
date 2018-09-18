@@ -8,7 +8,7 @@ use Damax\Common\Bridge\Symfony\Bundle\Annotation\Deserialize;
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\DeleteMedia;
 use Damax\Media\Application\Command\UploadMedia;
-use Damax\Media\Application\Dto\MediaCreationDto;
+use Damax\Media\Application\Dto\NewMediaDto;
 use Damax\Media\Application\Dto\UploadDto;
 use Damax\Media\Application\Exception\MediaNotFound;
 use Damax\Media\Application\Exception\MediaUploadFailure;
@@ -51,7 +51,7 @@ final class MediaController
      *         name="body",
      *         in="body",
      *         required=true,
-     *         @OpenApi\Schema(ref=@Model(type=MediaCreationDto::class))
+     *         @OpenApi\Schema(ref=@Model(type=NewMediaDto::class))
      *     ),
      *     @OpenApi\Response(
      *         response=202,
@@ -65,9 +65,9 @@ final class MediaController
      * )
      *
      * @Route("", methods={"POST"})
-     * @Deserialize(MediaCreationDto::class, validate=true, param="media")
+     * @Deserialize(NewMediaDto::class, validate=true, param="media")
      */
-    public function createAction(IdGenerator $idGenerator, MediaCreationDto $media): Response
+    public function createAction(IdGenerator $idGenerator, NewMediaDto $media): Response
     {
         // Violation of DDD?
         $mediaId = (string) $idGenerator->mediaId();

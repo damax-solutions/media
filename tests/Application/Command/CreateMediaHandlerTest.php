@@ -6,7 +6,7 @@ namespace Damax\Media\Tests\Application\Command;
 
 use Damax\Media\Application\Command\CreateMedia;
 use Damax\Media\Application\Command\CreateMediaHandler;
-use Damax\Media\Application\Dto\MediaCreationDto;
+use Damax\Media\Application\Dto\NewMediaDto;
 use Damax\Media\Domain\Model\MediaFactory;
 use Damax\Media\Domain\Model\MediaId;
 use Damax\Media\Domain\Model\MediaRepository;
@@ -48,7 +48,7 @@ class CreateMediaHandlerTest extends TestCase
      */
     public function it_creates_media()
     {
-        $dto = new MediaCreationDto();
+        $dto = new NewMediaDto();
         $dto->type = 'image';
         $dto->name = 'Test PNG image';
         $dto->mimeType = 'application/pdf';
