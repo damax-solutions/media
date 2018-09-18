@@ -32,7 +32,7 @@ final class DownloadController
      *
      * @throws NotFoundHttpException
      */
-    public function downloadAction(string $id): Response
+    public function download(string $id): Response
     {
         try {
             return $this->queryBus->handle(new DownloadMedia($id));
@@ -47,7 +47,7 @@ final class DownloadController
      * @throws NotFoundHttpException
      * @throws BadRequestHttpException
      */
-    public function imageAction(Request $request, string $id): Response
+    public function image(Request $request, string $id): Response
     {
         try {
             return $this->queryBus->handle(new GetImage($id, $request->query->all()));

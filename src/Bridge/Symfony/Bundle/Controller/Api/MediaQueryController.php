@@ -49,7 +49,7 @@ final class MediaQueryController
      *
      * @throws NotFoundHttpException
      */
-    public function getAction(string $id): MediaDto
+    public function view(string $id): MediaDto
     {
         try {
             return $this->queryBus->handle(new FetchMedia($id));

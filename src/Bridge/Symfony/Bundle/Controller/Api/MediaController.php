@@ -67,7 +67,7 @@ final class MediaController
      * @Route("", methods={"POST"})
      * @Deserialize(NewMediaDto::class, validate=true, param="media")
      */
-    public function createAction(IdGenerator $idGenerator, NewMediaDto $media): Response
+    public function create(IdGenerator $idGenerator, NewMediaDto $media): Response
     {
         // Violation of DDD?
         $mediaId = (string) $idGenerator->mediaId();
@@ -120,7 +120,7 @@ final class MediaController
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
-    public function uploadAction(Request $request, string $id, ValidatorInterface $validator)
+    public function upload(Request $request, string $id, ValidatorInterface $validator)
     {
         if (!($length = $request->headers->get('Content-Length'))) {
             throw new LengthRequiredHttpException();
@@ -169,7 +169,7 @@ final class MediaController
      *
      * @throws NotFoundHttpException
      */
-    public function deleteAction(string $id): Response
+    public function delete(string $id): Response
     {
         try {
             $this->commandBus->handle(new DeleteMedia($id));
