@@ -55,7 +55,7 @@ final class MediaController
      *     ),
      *     @OpenApi\Response(
      *         response=202,
-     *         description="Request result.",
+     *         description="Request accepted.",
      *         @OpenApi\Header(
      *             header="Location",
      *             type="string",
@@ -95,7 +95,7 @@ final class MediaController
      *     ),
      *     @OpenApi\Response(
      *         response=202,
-     *         description="Request result.",
+     *         description="Request accepted.",
      *         @OpenApi\Header(
      *             header="Location",
      *             type="string",
