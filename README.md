@@ -6,4 +6,8 @@ Media management.
 
 ## Contribute
 
-If you wish to contribute take a look how to [run the code locally](doc/development.md) in Docker.
+Install dependencies and run tests:
+
+```bash
+$ make
+```

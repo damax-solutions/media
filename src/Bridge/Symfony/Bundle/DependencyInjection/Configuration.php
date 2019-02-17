@@ -20,9 +20,9 @@ final class Configuration implements ConfigurationInterface
 
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('damax_media');
 
-        $rootNode = $treeBuilder->root('damax_media');
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode
             ->children()
                 ->append($this->storageNode('storage'))

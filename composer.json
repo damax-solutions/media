@@ -3,12 +3,6 @@
   "type": "library",
   "description": "Media management.",
   "license": "MIT",
-  "autoload": {
-    "psr-4": { "Damax\\Media\\": "src/" }
-  },
-  "autoload-dev": {
-    "psr-4": { "Damax\\Media\\Tests\\": "tests/" }
-  },
   "require": {
     "php": ">=7.1",
     "beberlei/assert": "^2.9",
@@ -32,19 +26,23 @@
     "symfony/validator": "^4.0",
     "twig/twig": "^2.4"
   },
+  "autoload": {
+    "psr-4": { "Damax\\Media\\": "src/" }
+  },
+  "autoload-dev": {
+    "psr-4": { "Damax\\Media\\Tests\\": "tests/" }
+  },
   "scripts": {
     "cs": "php-cs-fixer fix",
     "test": "simple-phpunit",
-    "test-cc": "./bin/phpunit-coverage",
-    "test-ci": "simple-phpunit --coverage-clover=build/logs/clover.xml",
-    "test-publish": "php-coveralls"
+    "test-cc": "phpdbg -qrr ./vendor/bin/simple-phpunit --coverage-html=build/phpunit"
   },
   "config": {
     "sort-packages": true
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "2.0-dev"
+      "dev-master": "2.1-dev"
     }
   }
 }
